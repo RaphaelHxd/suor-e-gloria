@@ -591,6 +591,22 @@ em.up{color:var(--acc)}em.dn{color:var(--bad)}
 .hquick button{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 6px;color:var(--text);font:600 12px var(--f-body);cursor:pointer}
 .hquick .ic{width:22px;height:22px;color:var(--acc)}
 .hquick button:active{transform:scale(.96)}
+
+/* ---------- Ênfase em cartões e série incompleta ---------- */
+.enfg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.enf{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:88px;padding:12px 6px 10px;border-radius:14px;border:1px solid var(--line);background:var(--card2);color:var(--text);cursor:pointer;font:600 13px var(--f-body);text-align:center;line-height:1.15;transition:border-color .2s,background-color .2s,transform .15s}
+.enf.eq{grid-column:1/-1;flex-direction:row;justify-content:flex-start;gap:12px;min-height:0;padding:12px 14px;text-align:left}
+.enf-t{display:block}.enf-t small{display:block;color:var(--muted);font-weight:500;font-size:12px;margin-top:2px}
+.enf-i{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--paper);border:1px solid var(--line);transition:background-color .2s}
+.enf-i .ic{width:20px;height:20px;color:var(--muted);transition:color .2s}
+.enf-ck{position:absolute;top:7px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--acc);color:var(--ink);font:800 11px/18px var(--f-body);font-style:normal;opacity:0;transform:scale(.4);transition:opacity .2s,transform .25s cubic-bezier(.2,1.6,.4,1)}
+.enf.eq .enf-ck{top:50%;right:14px;margin-top:-9px}
+.enf.on{border-color:var(--acc);background:var(--acc-soft)}
+.enf.on .enf-i{background:var(--acc);border-color:var(--acc)}.enf.on .enf-i .ic{color:var(--ink)}
+.enf.on .enf-ck{opacity:1;transform:scale(1)}
+.enf:active{transform:scale(.96)}
+.bub.less{background:var(--acc-soft);border:2px solid var(--acc);color:var(--acc)}
+.bub.less small{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -1007,7 +1023,7 @@ function vTreinos(){
     <p style="margin:0 0 10px">Escolha o objetivo e quantos dias você treina. O app monta a divisão por grupos musculares.</p>
     <div class="goals">${Object.entries(GOALS).map(([k,x])=>`<button class="goal ${goal===k?'on':''}" data-tgoal="${k}" aria-pressed="${goal===k}">${ic(GI[k])}${x.n}<small>${x.d}</small></button>`).join('')}</div>
     <p class="lbl">Ênfase (grupo para dar mais atenção)</p>
-    <div class="gchips">${Object.entries(EMPH).map(([k,x])=>`<button class="mus ${enf===k?'on':''}" data-tenf="${k}" aria-pressed="${enf===k}">${ic(x.ic)}${x.n}</button>`).join('')}</div>
+    <div class="enfg">${Object.entries(EMPH).map(([k,x])=>`<button class="enf ${k==='eq'?'eq':''} ${enf===k?'on':''}" data-tenf="${k}" aria-pressed="${enf===k}"><span class="enf-i">${ic(x.ic)}</span><span class="enf-t">${x.n}${k==='eq'?'<small>Todos os grupos por igual</small>':''}</span><i class="enf-ck" aria-hidden="true">✓</i></button>`).join('')}</div>
     <p class="lbl">Dias por semana</p>
     <div class="cnt">${[2,3,4,5,6].map(n=>`<button class="day ${cnt===n?'on':''}" data-tdays="${n}" aria-pressed="${cnt===n}">${n}</button>`).join('')}</div>
   </section>
