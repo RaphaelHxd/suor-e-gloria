@@ -607,6 +607,14 @@ em.up{color:var(--acc)}em.dn{color:var(--bad)}
 .enf:active{transform:scale(.96)}
 .bub.less{background:var(--acc-soft);border:2px solid var(--acc);color:var(--acc)}
 .bub.less small{color:var(--muted)}
+
+/* ---------- Ícones duotone ---------- */
+.ic{stroke-width:1.8}
+.ic .d{fill:currentColor;fill-opacity:.22;stroke:none}
+.ic .s{fill:currentColor;stroke:none}
+.enf-i .ic{width:24px;height:24px;color:var(--acc)}
+.stat .ic,.goal .ic{color:var(--acc)}
+.enf-i{background:var(--acc-soft);border-color:transparent}
 </style>
 </head>
 <body>
@@ -711,26 +719,27 @@ const PHASES=[
 ];
 
 /* ---------- Ícones (traço grosso, estilo quadrinho) ---------- */
+const TORSO='<circle class="d" cx="12" cy="3.5" r="2.3"/><circle cx="12" cy="3.5" r="2.3"/><path d="M8 7.6c1.2-.6 2.6-.9 4-.9s2.8.3 4 .9l2.3 1.2c.7.4 1.1 1.1 1.1 1.9V15.5h-1.8l-.4-4.4-.8 4.6.5 5.8H7.1l.5-5.8-.8-4.6-.4 4.4H4.6v-4.8c0-.8.4-1.5 1.1-1.9z"/>';
 const IC={
-  flame:'<path d="M12 2c1 3 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-5 1-8z"/>',
-  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-  bolt:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
-  scale:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 10a4 4 0 0 1 8 0M12 10l2-2"/>',
-  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 15l3 3 5-5"/>',
-  dumbbell:'<path d="M6 7v10M18 7v10M3 9.5v5M21 9.5v5M6 12h12"/>',
-  kettle:'<path d="M9 9V7a3 3 0 0 1 6 0v2"/><path d="M6 14a6 6 0 0 0 12 0c0-3-2-5-4-5h-4c-2 0-4 2-4 5z"/>',
-  chest:'<path d="M3 6c4-2 14-2 18 0v5c-2 4-7 4-9 1-2 3-7 3-9-1z"/><path d="M12 6v6"/>',
-  back:'<path d="M4 4h16l-4 16H8z"/><path d="M12 4v16M7 9l5 3 5-3"/>',
-  legs:'<path d="M9 2v9c0 2-1 4-1 7v4h3v-4l1-6M15 2v9c0 2 1 4 1 7v4h-3"/>',
-  arm:'<path d="M4 19c0-4 2-7 5-8l2-6h3l-1 6c4 0 7 3 7 8z"/><path d="M10 15c1-1 3-1 4 0"/>',
-  shoulder:'<circle cx="12" cy="7" r="3"/><path d="M3 20c0-5 4-8 9-8s9 3 9 8"/>',
-  abs:'<rect x="7" y="3" width="10" height="18" rx="3"/><path d="M12 3v18M7 9h10M7 15h10"/>',
-  glutes:'<path d="M4 7c0 8 3 13 8 13s8-5 8-13"/><path d="M12 10v10M4 7h16"/>',
-  heart:'<path d="M12 20s-8-5-8-11a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 6-8 11-8 11z"/><path d="M7 11h3l1-2 2 4 1-2h3"/>',
-  stretch:'<circle cx="12" cy="4" r="2"/><path d="M12 7v6l-4 8M12 13l4 8M4 9h16"/>',
-  moon:'<path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/><path d="M17 3v3M15.5 4.5h3"/>',
-  trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 21h8M10 17h4"/>',
-  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>'
+  flame:'<path class="d" d="M12 2.5c1.2 3 6.2 5.6 6.2 11a6.2 6.2 0 0 1-12.4 0c0-3.2 2-5.3 3.2-6.3.1 2 1 3.2 2.1 3.4-.4-3.4.2-5.7.9-8.1z"/><path class="s" d="M12 21.2a3 3 0 0 1-3-3c0-1.9 1.4-3.2 2.4-4 .2 1.2.9 1.8 1.6 1.9.1-1 .4-1.8.9-2.5.8 1 1.1 2.3 1.1 3.3 0 2.4-1.3 4.3-3 4.3z"/><path d="M12 2.5c1.2 3 6.2 5.6 6.2 11a6.2 6.2 0 0 1-12.4 0c0-3.2 2-5.3 3.2-6.3.1 2 1 3.2 2.1 3.4-.4-3.4.2-5.7.9-8.1z"/>',
+  clock:'<circle class="d" cx="12" cy="13" r="8.5"/><circle cx="12" cy="13" r="8.5"/><path d="M12 8.5V13l3 2M9.5 2.5h5M12 2.5v2"/><circle class="s" cx="12" cy="13" r="1.3"/>',
+  bolt:'<path class="d" d="M13.5 2 4.5 13.5h6.5L10 22l9.5-12H13z"/><path d="M13.5 2 4.5 13.5h6.5L10 22l9.5-12H13z"/>',
+  scale:'<rect class="d" x="3" y="3.5" width="18" height="17" rx="4"/><rect x="3" y="3.5" width="18" height="17" rx="4"/><path d="M7.5 11a4.5 4.5 0 0 1 9 0z"/><path d="M12 11l2.2-2.6"/><circle class="s" cx="12" cy="11" r="1.1"/><path d="M8 16.5h8"/>',
+  cal:'<rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path class="d" d="M3 9.5V7.5a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v2z"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><path d="M8.5 15.2l2.3 2.3 4.7-4.7"/>',
+  dumbbell:'<rect class="s" x="5" y="6" width="3.4" height="12" rx="1.2"/><rect class="s" x="15.6" y="6" width="3.4" height="12" rx="1.2"/><rect class="d" x="2" y="8.5" width="3" height="7" rx="1"/><rect class="d" x="19" y="8.5" width="3" height="7" rx="1"/><rect x="2" y="8.5" width="3" height="7" rx="1"/><rect x="19" y="8.5" width="3" height="7" rx="1"/><path d="M8.4 12h7.2"/>',
+  kettle:'<path d="M8.6 10.2C8 6 9.6 3.5 12 3.5s4 2.5 3.4 6.7"/><circle class="d" cx="12" cy="15" r="6.3"/><circle cx="12" cy="15" r="6.3"/><path class="s" d="M9 14.5a3 3 0 0 1 6 0z"/>',
+  chest:TORSO+'<path class="s" d="M7.6 9.3c1.5-.9 3.4-1 4-.3v3.4c-1.2 1-3.3.9-4.3-.3zM16.4 9.3c-1.5-.9-3.4-1-4-.3v3.4c1.2 1 3.3.9 4.3-.3z"/>',
+  back:TORSO+'<path class="s" d="M8.2 9.2 12 11.4l3.8-2.2-.8 6.2-3 1.6-3-1.6z"/><path class="d" d="M9.6 7.4 12 9l2.4-1.6z"/>',
+  legs:'<path class="d" d="M7.2 2.8h9.6l.5 6.6-1.1 11.8h-3l-.9-10.1h-.6l-.9 10.1h-3L6.7 9.4z"/><path d="M7.2 2.8h9.6l.5 6.6-1.1 11.8h-3l-.9-10.1h-.6l-.9 10.1h-3L6.7 9.4z"/><path class="s" d="M7.8 4.6h3.6v6.2l-1.9 1.9-1.8-3.4zM16.2 4.6h-3.6v6.2l1.9 1.9 1.8-3.4z"/>',
+  arm:'<path class="d" d="M4 20.5c0-3.2 1-6.1 3.6-7.6L11 10.6l1.3-4.6c.3-1.1 1.4-1.8 2.5-1.5 1.1.3 1.8 1.4 1.5 2.5l-.9 3.6c2.7.3 4.6 2.6 4.6 5.3v4.6z"/><path d="M4 20.5c0-3.2 1-6.1 3.6-7.6L11 10.6l1.3-4.6c.3-1.1 1.4-1.8 2.5-1.5 1.1.3 1.8 1.4 1.5 2.5l-.9 3.6c2.7.3 4.6 2.6 4.6 5.3v4.6z"/><path class="s" d="M8.2 15c1.6-2.2 4.8-2.5 6.9-.6 1.1 1 1.5 2.4 1.3 3.7H8.1z"/>',
+  shoulder:TORSO+'<path class="s" d="M7.2 7.7c-1.6.3-2.6 1.4-2.6 3l.2 1.8c1.4-.7 2.7-1.9 3.4-3.6zM16.8 7.7c1.6.3 2.6 1.4 2.6 3l-.2 1.8c-1.4-.7-2.7-1.9-3.4-3.6z"/>',
+  abs:'<path class="d" d="M6.5 4h11l.8 8.5-1.1 8.5H6.8l-1.1-8.5z"/><path d="M6.5 4h11l.8 8.5-1.1 8.5H6.8l-1.1-8.5z"/><rect class="s" x="8.9" y="6" width="2.5" height="3.2" rx=".8"/><rect class="s" x="12.6" y="6" width="2.5" height="3.2" rx=".8"/><rect class="s" x="8.9" y="10.4" width="2.5" height="3.2" rx=".8"/><rect class="s" x="12.6" y="10.4" width="2.5" height="3.2" rx=".8"/><rect class="s" x="8.9" y="14.8" width="2.5" height="3.2" rx=".8"/><rect class="s" x="12.6" y="14.8" width="2.5" height="3.2" rx=".8"/>',
+  glutes:'<path d="M5.5 4.5h13l1 7.5-2 9h-3.6L12 14.6 10.1 21H6.5l-2-9z"/><path class="s" d="M6.2 8.6C6.2 6.8 7.8 6 9.3 6s2.4 1 2.4 2.6v3.3c-1.9 1.5-4.7 1-5.5-1.1zM17.8 8.6c0-1.8-1.6-2.6-3.1-2.6s-2.4 1-2.4 2.6v3.3c1.9 1.5 4.7 1 5.5-1.1z"/>',
+  heart:'<path class="d" d="M12 20.5s-8.3-5-8.3-11.2a4.4 4.4 0 0 1 8.3-2 4.4 4.4 0 0 1 8.3 2c0 6.2-8.3 11.2-8.3 11.2z"/><path d="M12 20.5s-8.3-5-8.3-11.2a4.4 4.4 0 0 1 8.3-2 4.4 4.4 0 0 1 8.3 2c0 6.2-8.3 11.2-8.3 11.2z"/><path d="M6.5 11.5h3l1.3-2.5 2.2 4.6 1.3-2.1h3.2"/>',
+  stretch:'<circle class="s" cx="7.5" cy="4.5" r="2.1"/><path d="M8 7.5l3 6-4 7.5M11 13.5l5.5 6.5M8.6 9l10.4-4.5"/><path class="d" d="M3 21h18v-1.6H3z"/>',
+  moon:'<path class="d" d="M19.5 14.5A8 8 0 1 1 9.5 4.5a6.2 6.2 0 0 0 10 10z"/><path d="M19.5 14.5A8 8 0 1 1 9.5 4.5a6.2 6.2 0 0 0 10 10z"/><path class="s" d="M16.5 2.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z"/>',
+  trophy:'<path class="d" d="M7.5 3.5h9v5.5a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 3.5h9v5.5a4.5 4.5 0 0 1-9 0zM7.5 5.5H4.5a3.2 3.2 0 0 0 3.2 4.2M16.5 5.5h3a3.2 3.2 0 0 1-3.2 4.2M12 13.5v3.5"/><path class="s" d="M8 21v-1.5a2.5 2.5 0 0 1 2.5-2.5h3a2.5 2.5 0 0 1 2.5 2.5V21z"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle class="d" cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="5.5"/><circle class="s" cx="12" cy="12" r="2"/><path d="M12 12l7-7M16.5 4.5h3v3"/>'
 };
 const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||IC.dumbbell}</svg>`;
 function mi(l){l=l.toLowerCase();
