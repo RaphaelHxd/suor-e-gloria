@@ -683,7 +683,7 @@ body::before{background:rgba(9,11,14,.7)}
 .ag-top{display:flex;gap:18px;align-items:center;margin:6px 0 14px}
 .ag-glass{width:64px;flex:none}.ag-glass svg{width:64px;height:90px;display:block;overflow:visible}
 .ag-gl{fill:rgba(255,255,255,.04);stroke:rgba(238,241,244,.35);stroke-width:2}
-.ag-lvl{transition:transform .9s cubic-bezier(.3,1.3,.5,1)}
+.ag-lvl{transition:transform .8s cubic-bezier(.25,.8,.3,1)}
 .ag-w1{fill:var(--acc);opacity:.85;animation:agWave 3s linear infinite}.ag-w2{fill:var(--acc);opacity:.35;animation:agWave 4.6s linear infinite reverse}
 @keyframes agWave{to{transform:translateX(60px)}}
 .ag-v{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.ag-v b{font:700 40px/1 var(--f-display);color:var(--text)}.ag-v span{color:var(--muted);font-size:14px}
@@ -713,6 +713,11 @@ body::before{background:rgba(9,11,14,.7)}
 .sh-t{display:flex;align-items:center;gap:8px;margin:0 0 4px}.sh-t .ic{width:26px;height:26px;color:var(--acc)}
 .sh [data-agtest]{margin-top:16px;display:inline-flex;align-items:center;gap:6px}.sh [data-agtest] .ic{width:16px;height:16px}
 @media (prefers-reduced-motion:reduce){.ag-w1,.ag-w2{animation:none}.ag-lvl{transition:none}}
+
+/* Toques rápidos não dão zoom nem mexem a tela */
+html,body,button,a,input,select,label,.bub,.chip{touch-action:manipulation}
+.toast.pow{animation:toastIn .3s cubic-bezier(.2,1.2,.4,1) both}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px) scale(.94)}to{opacity:1;transform:translateX(-50%)}}
 </style>
 </head>
 <body>
