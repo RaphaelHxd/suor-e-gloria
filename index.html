@@ -559,6 +559,38 @@ nav button.on svg{animation:navPop .35s cubic-bezier(.2,1.6,.4,1)}
 .ex.next{animation:nextIn .6s cubic-bezier(.2,.9,.3,1) both}
 @keyframes nextIn{0%{box-shadow:inset 3px 0 0 var(--acc),0 0 0 0 rgba(198,241,53,.0)}40%{box-shadow:inset 3px 0 0 var(--acc),0 0 0 4px rgba(198,241,53,.18)}100%{box-shadow:inset 3px 0 0 var(--acc),0 0 0 0 rgba(198,241,53,0)}}
 @media (prefers-reduced-motion:reduce){.stamp{display:none}}
+
+/* ---------- Início ---------- */
+.hi-sau{margin:2px 2px 12px;color:var(--muted);font-size:15px}.hi-sau b{color:var(--text)}
+.hcard .hname{font-size:30px;margin:12px 0 2px}
+.hgr{color:var(--muted);font-size:14px;margin:0 0 14px}
+.hmeta{display:inline-flex;align-items:center;gap:4px;color:var(--muted);font:600 12px var(--f-body)}.hmeta .ic{width:14px;height:14px;color:var(--acc)}
+.hgo{display:flex;align-items:center;justify-content:center;gap:8px;font-size:20px;padding:14px}.hgo .ic{width:22px;height:22px}
+.hsec{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.hsec h2{margin:0;font-size:22px}
+.lnk{background:none;border:0;color:var(--acc);font:600 13px var(--f-body);cursor:pointer;padding:4px 0}
+.hgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hst{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.hst small{display:block;color:var(--muted);font:700 11px var(--f-label);text-transform:uppercase;letter-spacing:.08em}
+.hst b{display:block;font:700 28px var(--f-display);line-height:1.1;margin-top:2px}.hst b span{font-size:15px;color:var(--muted)}
+.hst em,.hmain em,.hrow em{font-style:normal;font:600 12px var(--f-body);color:var(--muted)}
+em.up{color:var(--acc)}em.dn{color:var(--bad)}
+.hbar{height:6px;border-radius:99px;background:var(--line);margin-top:6px;overflow:hidden}.hbar i{display:block;height:100%;background:var(--acc);border-radius:99px}
+.hmain{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.hmain small{display:block;color:var(--muted);font-size:12px}.hmain b{display:block;font:700 30px var(--f-display);line-height:1.1}
+.hsp{width:120px;height:36px;flex:none}
+.hlist{margin-top:8px}
+.hrow{display:grid;grid-template-columns:1fr auto;grid-template-areas:"n v" "n s";align-items:center;column-gap:10px;padding:9px 2px;border-top:1px solid var(--line)}
+.hrow:first-child{border-top:0}
+.hrow span{grid-area:n;font-weight:600;display:flex;align-items:center;gap:6px}.hrow span .ic{color:var(--acc)}
+.hrow b{grid-area:v;text-align:right;font:700 18px var(--f-display)}.hrow small{grid-area:s;text-align:right;color:var(--muted);font-size:11px}
+.hpeso{margin-top:6px;border-top:1px solid var(--line)}
+.hrec{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:14px;line-height:1.35}
+.hrec i{flex:none;width:10px;height:10px;border-radius:50%;margin-top:5px}.hrec i.o{background:#c6f135}.hrec i.m{background:#e0a43a}.hrec i.t{background:#ef6b5d}
+.hrec b{font-weight:700}
+.hquick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.hquick button{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 6px;color:var(--text);font:600 12px var(--f-body);cursor:pointer}
+.hquick .ic{width:22px;height:22px;color:var(--acc)}
+.hquick button:active{transform:scale(.96)}
 </style>
 </head>
 <body>
@@ -576,8 +608,8 @@ nav button.on svg{animation:navPop .35s cubic-bezier(.2,1.6,.4,1)}
 <div id="drawer" hidden></div>
 <div id="celebrate" hidden></div>
 <nav aria-label="Navegação principal"><div class="in">
-  <button data-go="hoje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="fl" x="2.5" y="9" width="3" height="6" rx="1"/><rect class="fl" x="5.5" y="6.5" width="3.5" height="11" rx="1.2"/><rect class="fl" x="15" y="6.5" width="3.5" height="11" rx="1.2"/><rect class="fl" x="18.5" y="9" width="3" height="6" rx="1"/><path d="M9 12h6"/></svg><span>Hoje</span></button>
-  <button data-go="treinos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="fl" x="5" y="4" width="14" height="17" rx="2.5"/><rect x="9" y="2.5" width="6" height="3.5" rx="1" class="fl"/><path class="cut" d="M9 11h6M9 15h4"/></svg><span>Treinos</span></button>
+  <button data-go="inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="fl" d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5H15v-5.5H9v5.5H5.5A1.5 1.5 0 0 1 4 19z"/></svg><span>Início</span></button>
+  <button data-go="hoje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="fl" x="2.5" y="9" width="3" height="6" rx="1"/><rect class="fl" x="5.5" y="6.5" width="3.5" height="11" rx="1.2"/><rect class="fl" x="15" y="6.5" width="3.5" height="11" rx="1.2"/><rect class="fl" x="18.5" y="9" width="3" height="6" rx="1"/><path d="M9 12h6"/></svg><span>Treino</span></button>
   <button data-go="semana"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path class="fl" d="M3.5 10V7.5A2.5 2.5 0 0 1 6 5h12a2.5 2.5 0 0 1 2.5 2.5V10z"/><path d="M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.7" fill="currentColor" stroke="none"/></svg><span>Semana</span></button>
   <button data-go="evolucao"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 20.5h17"/><rect class="fl" x="5" y="12" width="3.5" height="8.5" rx="1"/><rect class="fl" x="10.25" y="8" width="3.5" height="12.5" rx="1"/><rect class="fl" x="15.5" y="4" width="3.5" height="16.5" rx="1"/></svg><span>Evolução</span></button>
   <button data-go="perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="fl" cx="12" cy="8" r="4"/><path class="fl" d="M4.5 20.5c1-4 4-6 7.5-6s6.5 2 7.5 6z"/></svg><span>Perfil</span></button>
@@ -810,7 +842,7 @@ function exDraft(e){
 /* ---------- Telas ---------- */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let view='hoje';
+let view='inicio';
 
 function vHoje(){
   const plan=weekPlan(),code=todayCode(),picked=!!S.pick[iso(today)],w=weekIndex(),ph=phaseOf(w);
@@ -875,9 +907,69 @@ function vHoje(){
   return h;
 }
 
+
+/* ---------- Início: painel de performance ---------- */
+function sparkSvg(vals){if(vals.length<2)return'';const W=120,H=36,mn=Math.min(...vals),mx=Math.max(...vals),r=mx-mn||1;
+  const pts=vals.map((v,i)=>[4+i*(W-8)/(vals.length-1),H-5-(H-10)*(v-mn)/r]);
+  return `<svg class="hsp" viewBox="0 0 ${W} ${H}" aria-hidden="true"><polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#c6f135" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="3.5" fill="#c6f135"/></svg>`}
+function vInicio(){
+  const plan=weekPlan(),code=todayCode(),w=weekIndex(),ph=phaseOf(w),td=iso(today);
+  const hr=new Date().getHours(),sau=hr<12?'Bom dia':hr<18?'Boa tarde':'Boa noite';
+  const nm=(S.profile.nome&&S.profile.nome!=='atleta')?S.profile.nome.split(' ')[0]:'atleta';
+  const doneToday=S.logs.find(l=>l.date===td&&!l.ex&&!l.atv);
+  let h='';
+  /* treino de hoje */
+  if(code){const exs=todayExs(code),est=kcalOf(exs);
+    h+=`<section class="panel burst hcard"><div class="row" style="justify-content:space-between"><span class="tag">${doneToday?'✓ Feito hoje':'Treino de hoje'}</span><span class="hmeta">${ic('clock')} ~${est.min} min · ${ic('flame')} ~${est.kcal} kcal</span></div>
+      <h2 class="hname">${esc(SES[code].n)}</h2><p class="hgr">${SES[code].g.join(' · ')} · ${exs.length} exercícios</p>
+      ${doneToday?`<p class="note" style="margin:0 0 12px">Mandou bem! Você gastou cerca de <b style="color:var(--acc)">${doneToday.kcal} kcal</b> hoje.</p><button class="btn y" data-go="hoje">Ver o treino de hoje</button>`
+        :`<button class="btn hgo" data-go="hoje">${ic('dumbbell')} Começar treino</button>`}</section>`}
+  else{let nd=null;for(let i=1;i<=7;i++){const d=addDays(today,i).getDay();if(plan[d]){nd=[i,d];break}}
+    h+=`<section class="panel burst hcard"><span class="tag">Dia de descanso</span><h2 class="hname">Recupere as energias</h2>
+      <p class="hgr">${nd?`Próximo treino: <b style="color:var(--text)">${esc(SES[plan[nd[1]]].n)}</b> ${nd[0]===1?'amanhã':DN[nd[1]].toLowerCase()==='sáb'||DN[nd[1]].toLowerCase()==='dom'?'no '+DN[nd[1]]:'na '+DN[nd[1]]}`:'Nenhum treino marcado na semana.'}</p>
+      <div class="row" style="gap:8px"><button class="btn small y" data-picksheet="1">Treinar mesmo assim</button><button class="btn small y" data-actsheet="1">Registrar atividade</button></div></section>`}
+  /* semana */
+  const W=weeks(),cur=W[W.length-1],prev=W[W.length-2],nPlan=Object.keys(plan).length,st=streak();
+  const kk=n=>n>=1000?(n/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+'k':n;
+  const dl=(a,b,u='')=>b?`<em>sem. passada: ${kk(b)}${u}</em>`:'';
+  h+=`<section class="panel"><div class="hsec"><h2>Esta semana</h2><button class="lnk" data-go="semana">Ver semana ›</button></div>
+    <div class="hgrid">
+      <div class="hst"><small>Treinos</small><b>${cur.n}<span>/${nPlan}</span></b><div class="hbar"><i style="width:${Math.min(100,nPlan?cur.n/nPlan*100:0)}%"></i></div></div>
+      <div class="hst"><small>Calorias</small><b>${kk(cur.kcal)}</b>${dl(cur.kcal,prev.kcal)}</div>
+      <div class="hst"><small>Volume</small><b>${kk(cur.vol)}<span> kg</span></b>${dl(cur.vol,prev.vol,' kg')}</div>
+      <div class="hst"><small>Sequência</small><b>${st}<span> ${st===1?'semana':'semanas'}</span></b>${st?'<em class="up">🔥 seguidas</em>':''}</div>
+    </div></section>`;
+  /* performance */
+  const real=Object.entries(S.hist).map(([k,H])=>[k,H.filter(x=>!x.ex&&x.kg>0).sort((a,b)=>a.date<b.date?-1:1)]).filter(([k,H])=>H.length&&EX[k]);
+  real.sort((a,b)=>b[1].length-a[1].length||(a[1][a[1].length-1].date<b[1][b[1].length-1].date?1:-1));
+  h+=`<section class="panel"><div class="hsec"><h2>Performance</h2><button class="lnk" data-go="evolucao">Evolução ›</button></div>`;
+  if(real.length){const [mk,MH]=real[0],best=Math.max(...MH.map(x=>x.kg)),first=MH[0].kg,last=MH[MH.length-1].kg;
+    h+=`<div class="hmain"><div><small>${esc(EX[mk].n)}</small><b>${fkg(last)} kg</b>${MH.length>1?`<em class="${last>=first?'up':'dn'}">${last>=first?'+':''}${fkg(r05(last-first))} kg desde o início</em>`:'<em>primeiro registro</em>'}</div>${sparkSvg(MH.slice(-8).map(x=>e1(x.kg,Math.max(...x.reps))))}</div>`;
+    h+=`<div class="hlist">${real.slice(0,4).map(([k,H])=>{const b=H.reduce((m,x)=>e1(x.kg,Math.max(...x.reps))>e1(m.kg,Math.max(...m.reps))?x:m,H[0]);
+      return `<div class="hrow"><span>${esc(EX[k].n)}</span><b>${fkg(Math.max(...H.map(x=>x.kg)))} kg</b><small>1RM ~${fkg(r05(e1(b.kg,Math.max(...b.reps))))}</small></div>`}).join('')}</div>`}
+  else h+=`<p class="note" style="margin:0">Conclua seu primeiro treino para ver aqui suas cargas, recordes e evolução.</p>`;
+  const P=S.peso.filter(p=>!p.ex).sort((a,b)=>a.date<b.date?-1:1);
+  if(P.length){const lp=P[P.length-1],base=P.find(p=>p.date>=iso(addDays(today,-30)))||P[0],d=r05(lp.kg-base.kg);
+    h+=`<div class="hrow hpeso"><span>${ic('scale')} Peso corporal</span><b>${lp.kg.toLocaleString('pt-BR')} kg</b><small>${P.length>1?`${d>0?'+':''}${d.toLocaleString('pt-BR')} kg em 30 dias`:'primeira pesagem'}</small></div>`}
+  h+=`</section>`;
+  /* corpo */
+  const R=recovery(),by={ok:[],mid:[],tired:[]};Object.keys(REG).forEach(r=>by[recState(R[r]||0)].push(REG[r]));
+  h+=`<section class="panel"><div class="hsec"><h2>Seu corpo</h2><button class="lnk" data-go="evolucao">Mapa ›</button></div>
+    ${by.tired.length?`<div class="hrec"><i class="t"></i><span><b>Descansando:</b> ${by.tired.join(', ')}</span></div>`:''}
+    ${by.mid.length?`<div class="hrec"><i class="m"></i><span><b>Recuperando:</b> ${by.mid.join(', ')}</span></div>`:''}
+    <div class="hrec"><i class="o"></i><span><b>Pronto para treinar:</b> ${by.ok.length===Object.keys(REG).length?'todos os músculos':by.ok.join(', ')||'nenhum ainda'}</span></div></section>`;
+  /* fase */
+  h+=`<section class="panel"><div class="hsec"><h2>Seu ciclo</h2><span class="tag">${ph.n}</span></div>
+    <p class="hgr" style="margin:0">Semana ${w+1} de 12 · ${esc(GOALS[S.profile.objetivo].n)}</p>
+    <div class="phase">${Array.from({length:12},(_,i)=>`<i class="${i<w?'done':i===w?'cur':''}"></i>`).join('')}</div>
+    <p class="note" style="margin-top:6px">${ph.d}.</p></section>`;
+  /* atalhos */
+  h+=`<div class="hquick"><button data-actsheet="1">${ic('heart')}<span>Outra atividade</span></button><button data-picksheet="1">${ic('bolt')}<span>Trocar treino</span></button><button data-go="treinos">${ic('target')}<span>Treinos prontos</span></button></div>`;
+  return h;
+}
 function vSemana(){
   const plan=weekPlan(),w=weekIndex(),ph=phaseOf(w);
-  let h=`<section class="panel burst"><h2>Quais dias você treina?</h2>
+  let h=`<button class="btn y" data-go="treinos" style="margin-bottom:16px">${ic('target')} Treinos prontos e meus treinos</button><section class="panel burst"><h2>Quais dias você treina?</h2>
     <div class="days">${[1,2,3,4,5,6,0].map(d=>`<button class="day ${S.profile.dias[d]?'on':''}" data-day="${d}" aria-pressed="${S.profile.dias[d]}">${DN[d]}</button>`).join('')}</div>
     <p class="note" style="color:var(--text)">O app divide os treinos conforme a quantidade de dias e o seu objetivo (${GOALS[S.profile.objetivo].n.toLowerCase()}).</p></section>`;
   h+=`<section class="panel"><span class="tag v">${ic('target')}Periodização</span><h2 style="margin-top:8px">Fase: ${ph.n}</h2>
@@ -1091,8 +1183,8 @@ function loadPhoto(file){
 function render(){
   $('#hiName').textContent=S.profile.nome||'atleta';
   $('#hiAv').innerHTML=avatar();
-  $('#view').innerHTML={hoje:vHoje,treinos:vTreinos,editor:vEditor,historico:vHistorico,semana:vSemana,evolucao:vEvolucao,perfil:vPerfil}[view]();
-  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===(view==='editor'?'treinos':view==='historico'?'evolucao':view)));
+  $('#view').innerHTML={inicio:vInicio,hoje:vHoje,treinos:vTreinos,editor:vEditor,historico:vHistorico,semana:vSemana,evolucao:vEvolucao,perfil:vPerfil}[view]();
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===(view==='editor'||view==='treinos'?'semana':view==='historico'?'evolucao':view)));
 }
 function go(v){if(v!=='treinos'&&v!=='editor')tGoal=tDays=tEnf=null;if(v!=='editor')ED=null;view=v;try{history.replaceState(null,'','#'+v)}catch(e){}render();window.scrollTo(0,0)}
 function toast(t){document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast pow';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
@@ -1177,7 +1269,7 @@ document.addEventListener('input',e=>{
   const t=e.target;if(!t.dataset.kg)return;const x=exDraft(curEx(t.dataset.kg));
   const v=parseFloat(t.value.replace(',','.'));x.kg=isNaN(v)?null:v;x.touched=true;save();
 });
-const h0=(location.hash||'').slice(1);if(['hoje','treinos','semana','evolucao','perfil','historico'].includes(h0))view=h0;
+const h0=(location.hash||'').slice(1);if(['inicio','hoje','treinos','semana','evolucao','perfil','historico'].includes(h0))view=h0;
 /* ================= Recursos extras (inspirados nos apps do mercado) ================= */
 const e1=(kg,r)=>kg*(1+r/30); /* 1RM estimado (Epley) */
 const fdate=d=>d.split('-').reverse().join('/');
@@ -1435,7 +1527,7 @@ document.addEventListener('click',e=>{
   if(t.id==='bkPaste'){openSheet(`<h2>Colar dados</h2><p class="note" style="margin-top:0">Cole aqui o texto do backup.</p><textarea id="bkTxt" rows="8"></textarea><button class="btn" id="bkParse" style="margin-top:10px">Continuar</button>`);return}
   if(t.id==='bkParse'){askRestore($('#bkTxt').value);return}
   if(t.id==='bkDo'&&pendingRestore){S=pendingRestore;pendingRestore=null;S.onboarded=true;S.d2=S.d2||{};S.custom=S.custom||{};S.exc=S.exc||{};S.hist=S.hist||{};S.swaps=S.swaps||{};S.med=S.med||[];S.fotos=S.fotos||[];S.pick=S.pick||{};S.notes=S.notes||{};S.profile.assign=S.profile.assign||{};
-    syncCustom();save();closeSheet();go('hoje');toast('Backup restaurado!');return}
+    syncCustom();save();closeSheet();go('inicio');toast('Backup restaurado!');return}
 });
 document.addEventListener('change',e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
@@ -1582,7 +1674,7 @@ document.addEventListener('click',e=>{
 
 /* ================= Acabamento: transições, micro-interações e animações ================= */
 const RM=(()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}})();
-const TABS=['hoje','treinos','semana','evolucao','perfil'];
+const TABS=['inicio','hoje','semana','evolucao','perfil'];
 const viewEl=document.getElementById('view'),navIn=document.querySelector('nav .in'),headEl=document.querySelector('header.top');
 let openDone=new Set();
 
@@ -1598,7 +1690,7 @@ function countUp(el){const t=el.textContent.trim();if(!/^\d{2,6}$/.test(t))retur
 
 /* Entrada de tela: desliza conforme a direção da aba, cards em cascata, gráficos se desenham */
 function enterAnim(from,to){
-  if(RM)return;const a=TABS.indexOf(from==='editor'?'treinos':from==='historico'?'evolucao':from),b=TABS.indexOf(to==='editor'?'treinos':to==='historico'?'evolucao':to);
+  if(RM)return;const M=v=>v==='editor'||v==='treinos'?'semana':v==='historico'?'evolucao':v,a=TABS.indexOf(M(from)),b=TABS.indexOf(M(to));
   viewEl.classList.remove('enter','from-l','from-r');void viewEl.offsetWidth;
   viewEl.classList.add('enter',b>=a?'from-r':'from-l');
   [...viewEl.children].forEach((c,i)=>c.style.setProperty('--i',Math.min(i,8)));
@@ -1706,6 +1798,7 @@ document.addEventListener('click',ev=>{const b=ev.target.closest('[data-setreps]
 const drawerEl=document.getElementById('drawer'),menuBtn=document.getElementById('menuBtn');
 const DI=(p)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
 const DRI={
+  home:DI('<path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5H15v-5.5H9v5.5H5.5A1.5 1.5 0 0 1 4 19z"/>'),
   hoje:DI('<path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/>'),
   treinos:DI('<path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/>'),
   semana:DI('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'),
@@ -1724,6 +1817,7 @@ function openDrawer(){
   drawerEl.innerHTML=`<div class="dr-bg" data-drclose="1"></div><aside class="dr" role="dialog" aria-modal="true" aria-label="Menu">
     <div class="dr-h"><span class="av">${S.profile.foto?`<img src="${S.profile.foto}" alt="">`:ini}</span><div><b>${esc(nm)}</b><small>${esc((GOALS[S.profile.objetivo]||{}).n||'')}</small></div><button class="dr-x" data-drclose="1" aria-label="Fechar menu">✕</button></div>
     <div class="dr-s">Navegar</div>
+    ${it('data-go="inicio"','home','Início',cur==='inicio')}
     ${it('data-go="hoje"','hoje','Treino de hoje',cur==='hoje')}
     ${it('data-go="semana"','semana','Minha semana',cur==='semana')}
     ${it('data-go="treinos"','treinos','Treinos prontos e meus treinos',cur==='treinos')}
@@ -1752,7 +1846,7 @@ drawerEl.addEventListener('click',e=>{
   if(t.dataset.drclose){closeDrawer();return}
   closeDrawer(true);
   if(t.dataset.drpick){if(view!=='hoje')go('hoje');pickSheet();e.stopPropagation()}
-  else if(t.dataset.dract){if(view!=='hoje')go('hoje');actSheet();e.stopPropagation()}
+  else if(t.dataset.dract){actSheet();e.stopPropagation()}
   else if(t.dataset.drtour){e.stopPropagation();startTour()}
   else if(t.dataset.drnew){e.stopPropagation();go('treinos');setTimeout(()=>{const b=document.querySelector('#view [data-new]');b&&b.click()},30)}
 });
@@ -1764,7 +1858,8 @@ drawerEl.addEventListener('touchend',e=>{if(dx0!==null&&e.changedTouches[0].clie
 
 /* ---------- Boas-vindas e tour guiado ---------- */
 const TOUR=[
-  {v:'hoje',sel:'.panel.burst',t:'Seu painel',x:'Aqui você vê a semana do ciclo, quantos treinos já fez, as calorias gastas e seu peso.'},
+  {v:'inicio',sel:'.hcard',t:'Início',x:'Sua tela inicial: o treino do dia a um toque, o resumo da semana, sua performance, a recuperação dos músculos e a fase do ciclo.'},
+  {v:'hoje',sel:'.panel.burst',t:'Treino de hoje',x:'Aqui ficam os exercícios do dia, com a semana do ciclo, os treinos feitos e as calorias.'},
   {v:'hoje',sel:'.ex .load',t:'Carga sugerida',x:'O app já sugere a carga com base no seu último treino. Ajuste com − e + sem precisar digitar.',miss:'Nos dias de treino, cada exercício mostra a carga sugerida com base no último treino.'},
   {v:'hoje',sel:'.ex .setrow',t:'Um toque por série',x:'Terminou a série? Toque na bolinha. Fez outro número de reps? Toque de novo e escolha na lista. "Fiz todas" marca tudo de uma vez. O timer de descanso começa sozinho.',miss:'Nos dias de treino, você marca cada série com um toque e o timer de descanso começa sozinho.'},
   {v:'hoje',sel:'.ex .tools',t:'Ajuda no treino',x:'Veja como fazer o exercício, troque por outro se a máquina estiver ocupada e calcule as anilhas da barra.',miss:'Nos dias de treino, cada exercício tem "Como fazer", "Trocar" e calculadora de anilhas.'},
@@ -1824,7 +1919,7 @@ function showStep(){
   });
 }
 function startTour(){tStep=0;showStep()}
-function endTour(){tStep=-1;TEl.hidden=true;TEl.innerHTML='';TEl.className='';S.tourDone=true;save();go('hoje')}
+function endTour(){tStep=-1;TEl.hidden=true;TEl.innerHTML='';TEl.className='';S.tourDone=true;save();go('inicio')}
 TEl.addEventListener('click',e=>{
   const t=e.target.closest('button');e.stopPropagation();if(!t)return;
   if(t.dataset.wgoal){S.profile.objetivo=t.dataset.wgoal;TEl.querySelectorAll('[data-wgoal]').forEach(b=>b.classList.toggle('on',b===t));return}
