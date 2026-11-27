@@ -531,6 +531,34 @@ nav button.on svg{animation:navPop .35s cubic-bezier(.2,1.6,.4,1)}
 .rp.tg{border-color:var(--acc-line);color:var(--acc)}
 .rp.on{background:var(--acc);color:var(--ink);border-color:var(--acc)}
 .rp:active{transform:scale(.94)}
+
+/* ---------- Toque na série e conclusão do exercício ---------- */
+.bub{transition:background-color .25s,border-color .25s,transform .15s cubic-bezier(.2,.9,.3,1.4);will-change:transform}
+.bub:active{transform:scale(.88)}
+.bub.pow{animation:bubPop .5s cubic-bezier(.2,1.5,.4,1)}
+.bub{position:relative}
+.bub.pow::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--acc);animation:ring2 .55s ease-out forwards;pointer-events:none}
+@keyframes bubPop{0%{transform:scale(.82)}55%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes ring2{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(1.6)}}
+.bub.wave{animation:bubWave .45s cubic-bezier(.2,1.5,.4,1) both;animation-delay:var(--d,0ms)}
+@keyframes bubWave{0%{transform:scale(1)}45%{transform:scale(1.14);box-shadow:0 0 0 6px var(--acc-soft)}100%{transform:scale(1)}}
+.ex.done.finishing .exb{display:block}
+.ex.finishing{position:relative;background:rgba(198,241,53,.07);box-shadow:inset 3px 0 0 var(--acc);margin-inline:-14px;padding-inline:14px;transition:background-color .4s}
+.ex.finishing .ex-h h3{text-decoration:none;color:var(--text)}
+.ex.finishing .ck{animation:ckPop .5s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes ckPop{0%{transform:scale(0) rotate(-45deg)}70%{transform:scale(1.2) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+.exb.collapsing{transition:max-height .45s cubic-bezier(.4,0,.2,1),opacity .35s;opacity:0}
+.stamp{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.6);opacity:0;display:flex;align-items:center;gap:8px;white-space:nowrap;
+  background:var(--acc);color:var(--ink);font:700 18px var(--f-display);text-transform:uppercase;letter-spacing:.03em;padding:10px 18px;border-radius:999px;
+  box-shadow:0 10px 30px rgba(198,241,53,.3);animation:stampIn .45s .12s cubic-bezier(.2,1.5,.4,1) forwards;pointer-events:none;z-index:2}
+.stamp span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--acc);font-size:14px}
+.stamp.out{animation:stampOut .3s ease-in forwards}
+@keyframes stampIn{to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@keyframes stampOut{from{transform:translate(-50%,-50%) scale(1);opacity:1}to{transform:translate(-50%,-70%) scale(.9);opacity:0}}
+.ex.justdone .ex-h{animation:fadeIn .35s both}
+.ex.next{animation:nextIn .6s cubic-bezier(.2,.9,.3,1) both}
+@keyframes nextIn{0%{box-shadow:inset 3px 0 0 var(--acc),0 0 0 0 rgba(198,241,53,.0)}40%{box-shadow:inset 3px 0 0 var(--acc),0 0 0 4px rgba(198,241,53,.18)}100%{box-shadow:inset 3px 0 0 var(--acc),0 0 0 0 rgba(198,241,53,0)}}
+@media (prefers-reduced-motion:reduce){.stamp{display:none}}
 </style>
 </head>
 <body>
@@ -823,7 +851,7 @@ function vHoje(){
   exs.forEach(e=>{
     const x=exDraft(e),sg=suggest(e.k),done=x.reps.filter(r=>r!==null).length;
     const isDone=x.reps.every(r=>r!==null),opened=openDone.has(e.k);
-    h+=`<div class="ex ${isDone?'done':''} ${isDone&&opened?'open':''} ${e.k===curK?'cur':''}" data-ex="${e.k}"><div class="ex-h" ${isDone?`data-exopen="${e.k}" role="button" tabindex="0" aria-expanded="${opened}"`:''}>${isDone?'<span class="ck">✓</span>':badge(e.m)}<h3>${esc(e.n)}</h3><span>${isDone?(x.kg&&!e.bw?fkg(x.kg)+' kg · ':'')+(opened?'fechar':'ver'):`${e.sets}× ${e.reps}`}</span></div><div class="exb">${musLine(e)}
+    h+=`<div class="ex ${isDone?'done':''} ${isDone&&opened?'open':''} ${e.k===curK?'cur':''} ${e.k===finishing?'finishing':''}" data-ex="${e.k}"><div class="ex-h" ${isDone?`data-exopen="${e.k}" role="button" tabindex="0" aria-expanded="${opened}"`:''}>${isDone?'<span class="ck">✓</span>':badge(e.m)}<h3>${esc(e.n)}</h3><span>${isDone?(x.kg&&!e.bw?fkg(x.kg)+' kg · ':'')+(opened?'fechar':'ver'):`${e.sets}× ${e.reps}`}</span></div><div class="exb">${musLine(e)}
       <div class="tools"><button class="tl" data-how="${e.k}">${ic('target')}Como fazer</button>${e.cardio?'':`<button class="tl" data-swap="${e.orig||e.k}">⇄ Trocar</button>`}${EX[e.k].bar&&!e.bw?`<button class="tl" data-plates="${e.k}">${ic('dumbbell')}Anilhas</button>`:''}<button class="tl" data-note="${e.k}">✎ Nota</button>${e.orig?'<span class="tag y">trocado hoje</span>':''}</div>${S.notes[e.k]?`<p class="enote">${ic('target')}${esc(S.notes[e.k])}</p>`:''}`;
     if(e.cardio){
       const on=x.reps[0]!==null;
@@ -1603,7 +1631,8 @@ document.addEventListener('click',e=>{
     try{navigator.vibrate&&navigator.vibrate(25)}catch(err){}
     const exEl=document.querySelector(`.ex[data-ex="${k}"]`);
     ono(b.dataset.bub?(document.querySelector(`[data-bub="${k}"][data-i="${i}"]`)||exEl):exEl);
-    if(exEl&&exEl.classList.contains('done')&&!RM){const nx=document.querySelector('.ex.cur');if(nx)setTimeout(()=>nx.scrollIntoView({behavior:'smooth',block:'center'}),380)}
+    const oldEx=b.closest('.ex'),wasDone=!!(oldEx&&oldEx.classList.contains('done'));
+    if(exEl&&exEl.classList.contains('done')&&!wasDone&&!RM)finishAnim(k,b.dataset.bub?i:null);
   }
 });
 
@@ -1643,6 +1672,26 @@ const SCENE={
 
 
 
+
+/* ---------- Exercício concluído: carimbo, recolhe suave e rola até o próximo ---------- */
+var finishing=null;
+function finishAnim(k,i){
+  clearTimeout(finishAnim.t1);clearTimeout(finishAnim.t2);
+  finishing=k;render();
+  const ex=document.querySelector(`.ex[data-ex="${k}"]`);if(!ex){finishing=null;return}
+  if(i!==null&&i!==undefined){const nb=ex.querySelector(`[data-bub="${k}"][data-i="${i}"]`);nb&&nb.classList.add('pow')}
+  ex.querySelectorAll('.bub.on').forEach((bb,j)=>{bb.style.setProperty('--d',(j*60)+'ms');bb.classList.add('wave')});
+  const st=document.createElement('div');st.className='stamp';st.innerHTML='<span>✓</span> Exercício concluído';ex.appendChild(st);
+  const exb=ex.querySelector('.exb');
+  finishAnim.t1=setTimeout(()=>{if(!exb||!exb.isConnected)return;
+    exb.style.maxHeight=exb.scrollHeight+'px';exb.style.overflow='hidden';void exb.offsetHeight;
+    exb.classList.add('collapsing');exb.style.maxHeight='0px';st.classList.add('out')},750);
+  finishAnim.t2=setTimeout(()=>{finishing=null;render();
+    const done=document.querySelector(`.ex[data-ex="${k}"]`);done&&done.classList.add('justdone');
+    const nx=document.querySelector('.ex.cur');
+    if(nx){const r=nx.getBoundingClientRect(),hh=(headEl.offsetHeight||64)+60;scrollTo({top:scrollY+r.top-hh,behavior:'smooth'});nx.classList.add('next')}
+  },1250);
+}
 /* ---------- Escolher reps de uma série ---------- */
 function repsSheet(e,i){
   const x=exDraft(e),cur=x.reps[i],top=Math.max(x.target+5,15),nums=[];for(let n=1;n<=Math.min(top,30);n++)nums.push(n);
