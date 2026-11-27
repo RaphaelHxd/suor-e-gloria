@@ -718,6 +718,12 @@ body::before{background:rgba(9,11,14,.7)}
 html,body,button,a,input,select,label,.bub,.chip{touch-action:manipulation}
 .toast.pow{animation:toastIn .3s cubic-bezier(.2,1.2,.4,1) both}
 @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px) scale(.94)}to{opacity:1;transform:translateX(-50%)}}
+
+/* ---------- Revisão: acabamento ---------- */
+html,body{overflow-x:clip}
+.top::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:calc(env(safe-area-inset-top,0px) + 2px);background:rgba(12,14,18,.92)}
+.prog.new.rep{display:none}
+.ag-week em{font-size:10px;letter-spacing:.02em}
 </style>
 </head>
 <body>
@@ -989,6 +995,7 @@ function vHoje(){
     <div class="row" style="margin-bottom:6px"><span class="tag y">${ic('clock')}~${est.min} min</span><span class="tag">${ic('flame')}~${est.kcal} kcal</span><span class="tag y">${ic('bolt')}${ph.rpe}</span></div>
     <p class="note" style="margin-top:0">${ph.d}. ${GOALS[S.profile.objetivo].met}</p>
     <div class="wprog"><div class="wbar"><i style="width:${prog.t?Math.round(100*prog.d/prog.t):0}%"></i></div><b>${prog.d===prog.t&&prog.t?'Tudo feito! Conclua o treino':`${prog.d} de ${prog.t} séries`}</b></div>`;
+  let newSeen=false;
   exs.forEach(e=>{
     const x=exDraft(e),sg=suggest(e.k),done=x.reps.filter(r=>r!==null).length;
     const isDone=x.reps.every(r=>r!==null),opened=openDone.has(e.k);
@@ -998,7 +1005,7 @@ function vHoje(){
       const on=x.reps[0]!==null;
       h+=`<div class="setrow"><button class="bub ${on?'on':''}" data-bub="${e.k}" data-i="0" aria-label="Concluir ${esc(e.n)}">${on?'✓':'GO'}</button><span class="note" style="margin:0">Toque quando terminar os ${e.reps}.</span></div>`;
     }else{
-      if(!e.bw)h+=`<div class="prog ${sg.kind}">${ic(sg.kind==='up'?'bolt':sg.kind==='down'?'target':sg.kind==='deload'?'moon':'trophy')}<span>${sg.last?`Última: <b>${fkg(sg.last.kg)} kg × ${sg.last.reps.join('/')}</b>. `:''}${sg.msg}</span></div>
+      if(!e.bw)h+=`<div class="prog ${sg.kind}${sg.kind==='new'&&(newSeen||!(newSeen=true))?' rep':''}">${ic(sg.kind==='up'?'bolt':sg.kind==='down'?'target':sg.kind==='deload'?'moon':'trophy')}<span>${sg.last?`Última: <b>${fkg(sg.last.kg)} kg × ${sg.last.reps.join('/')}</b>. `:''}${sg.msg}</span></div>
         <div class="load"><button class="stp" data-stp="${e.k}" data-d="-1" aria-label="Diminuir carga">−</button>
         <label class="kg"><input id="kg-${e.k}" inputmode="decimal" data-kg="${e.k}" value="${x.kg!==null?fkg(x.kg):''}" placeholder="—" aria-label="Carga de ${esc(e.n)} em kg"><span>kg</span></label>
         <button class="stp" data-stp="${e.k}" data-d="1" aria-label="Aumentar carga">+</button></div>`;
@@ -1057,7 +1064,7 @@ function vInicio(){
     h+=`<div class="hmain"><div><small>${esc(EX[mk].n)}</small><b>${fkg(last)} kg</b>${MH.length>1?`<em class="${last>=first?'up':'dn'}">${last>=first?'+':''}${fkg(r05(last-first))} kg desde o início</em>`:'<em>primeiro registro</em>'}</div>${sparkSvg(MH.slice(-8).map(x=>e1(x.kg,Math.max(...x.reps))))}</div>`;
     h+=`<div class="hlist">${real.slice(0,4).map(([k,H])=>{const b=H.reduce((m,x)=>e1(x.kg,Math.max(...x.reps))>e1(m.kg,Math.max(...m.reps))?x:m,H[0]);
       return `<div class="hrow"><span>${esc(EX[k].n)}</span><b>${fkg(Math.max(...H.map(x=>x.kg)))} kg</b><small>1RM ~${fkg(r05(e1(b.kg,Math.max(...b.reps))))}</small></div>`}).join('')}</div>`}
-  else h+=`<p class="note" style="margin:0">Conclua seu primeiro treino para ver aqui suas cargas, recordes e evolução.</p>`;
+  else h+=`<p class="note" style="margin:0">${S.logs.some(l=>!l.ex&&!l.atv)?'Anote a carga (kg) de cada exercício no treino para ver aqui sua evolução e seus recordes.':'Conclua seu primeiro treino para ver aqui suas cargas, recordes e evolução.'}</p>`;
   const P=S.peso.filter(p=>!p.ex).sort((a,b)=>a.date<b.date?-1:1);
   if(P.length){const lp=P[P.length-1],base=P.find(p=>p.date>=iso(addDays(today,-30)))||P[0],d=r05(lp.kg-base.kg);
     h+=`<div class="hrow hpeso"><span>${ic('scale')} Peso corporal</span><b>${lp.kg.toLocaleString('pt-BR')} kg</b><small>${P.length>1?`${d>0?'+':''}${d.toLocaleString('pt-BR')} kg em 30 dias`:'primeira pesagem'}</small></div>`}
@@ -1242,7 +1249,7 @@ function vEvolucao(){
     ks.forEach(k=>{const H=S.hist[k].filter(x=>x.kg>0),f=H[0].kg,l=H[H.length-1].kg,best=Math.max(...H.map(x=>x.kg)),d=l-f;
       const mn=Math.min(...H.map(x=>x.kg)),mx=Math.max(...H.map(x=>x.kg)),W=90,Hh=30;
       const pts=H.map((x,i)=>`${H.length>1?4+i*(W-8)/(H.length-1):W/2},${mx===mn?Hh/2:Hh-4-(x.kg-mn)/(mx-mn)*(Hh-8)}`).join(' ');
-      h+=`<div class="pr">${badge(EX[k].m)}<div class="pn"><b>${EX[k].n}</b><small>Recorde ${fkg(best)} kg · 1RM ~${fkg(r05(Math.max(...H.map(x=>e1(x.kg,Math.max(...x.reps))))))} kg</small></div>
+      h+=`<div class="pr">${badge(EX[k].m)}<div class="pn"><b>${EX[k].n}</b><small>Recorde ${fkg(best)} kg · <span style="white-space:nowrap">1RM ~${fkg(r05(Math.max(...H.map(x=>e1(x.kg,Math.max(...x.reps))))))} kg</span></small></div>
         <svg class="spark" viewBox="0 0 ${W} ${Hh}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="#c6f135" stroke-width="2.5" stroke-linejoin="round"/></svg>
         <div class="pv"><b>${fkg(l)} kg</b><small class="${d>0?'up':d<0?'dn':''}">${d>0?'+':''}${fkg(d)} kg</small></div></div>`});
     h+=`</div><p class="note">Carga atual de cada exercício e quanto mudou desde o primeiro registro.</p></section>`;
@@ -1358,7 +1365,8 @@ document.addEventListener('click',e=>{
     const est=kcalOf(exs),kcal=Math.round(est.kcal*(total?Math.max(doneSets,1)/total:1));
     const wasDone=S.logs.some(l=>l.date===iso(today)&&!l.ex&&!l.atv);
     S.logs=S.logs.filter(l=>!(l.date===iso(today)&&!l.ex&&!l.atv));
-    S.logs.push({date:iso(today),ses:code,kcal,vol:Math.round(vol)});
+    const mus=exs.filter(ex=>!ex.cardio&&!(ex.bw||exDraft(ex).kg)).map(ex=>[ex.k,exDraft(ex).reps.filter(r=>r!==null&&r>0).length]).filter(m=>m[1]);
+    S.logs.push({date:iso(today),ses:code,kcal,vol:Math.round(vol),...(mus.length?{mus}:{})});
     if(!wasDone)S.prCount=(S.prCount||0)+prs.length;
     const newAch=checkAch();save();stopRest();releaseAwake();
     lastShare={ses:SES[code].n,kcal,min:est.min,vol:Math.round(vol),prs,ach:newAch.map(a=>a.n),done:doneSets,total,rows:exs.map(ex=>{const x=exDraft(ex);return{n:ex.n,kg:ex.bw?0:x.kg,reps:x.reps.slice(),bw:ex.bw,cardio:ex.cardio,m:ex.m,s:ex.s||[]}})};
@@ -1536,6 +1544,8 @@ function recovery(){const R={},now=Date.now();
     const hrs=Math.max(0,(now-new Date(h.date+'T12:00:00').getTime())/36e5);if(hrs>=72)return;
     const w=(1-hrs/72)*h.reps.filter(r=>r>0).length,p=reg(e.m);if(p)R[p]=(R[p]||0)+w;
     (e.s||[]).forEach(m=>{const r=reg(m);if(r&&r!==p)R[r]=(R[r]||0)+w*.5})})});
+  S.logs.forEach(l=>{if(!l.mus||l.ex)return;const hrs=Math.max(0,(now-new Date(l.date+'T12:00:00').getTime())/36e5);if(hrs>=72)return;
+    l.mus.forEach(([k,n])=>{const e=EX[k];if(!e)return;const w=(1-hrs/72)*n,p=reg(e.m);if(p)R[p]=(R[p]||0)+w;(e.s||[]).forEach(m=>{const r=reg(m);if(r&&r!==p)R[r]=(R[r]||0)+w*.5})})});
   return R}
 const recState=v=>v>=4?'tired':v>=1.5?'mid':'ok';
 function recoveryPanel(){
@@ -1688,7 +1698,7 @@ function vHistorico(){
   const L=realLogs().slice().sort((a,b)=>b.date.localeCompare(a.date)||(a.atv?1:-1));
   let h=`<button class="linkb" data-go="evolucao" style="margin:0 0 10px;color:var(--text)">← Voltar para Evolução</button>
     <section class="panel burst"><h2>${ic('cal')} Histórico</h2><p style="margin:0">${L.filter(isTreino).length} treinos e ${L.filter(l=>l.atv).length} atividades registrados.</p></section>`;
-  if(!L.length)return h+`<section class="panel">${SCENE.empty}<p style="margin:12px 0 0">Nenhum treino registrado ainda. Conclua um treino na aba Hoje e ele aparece aqui.</p></section>`;
+  if(!L.length)return h+`<section class="panel">${SCENE.empty}<p style="margin:12px 0 0">Nenhum treino registrado ainda. Conclua um treino na aba Treino e ele aparece aqui.</p></section>`;
   let month='';
   L.forEach((l,i)=>{const d=new Date(l.date+'T12:00:00'),m=d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
     if(m!==month){month=m;h+=`<p class="mhd">${m}</p>`}
@@ -1860,14 +1870,14 @@ S.agua=S.agua||{};S.agua.log=S.agua.log||{};S.agua.cfg=Object.assign({meta:0,cop
 function aguaMeta(){const c=S.agua.cfg;if(c.meta)return c.meta;return Math.round(S.profile.peso*35/50)*50+(todayCode()?500:0)}
 function aguaDia(d){return (S.agua.log[d]||[]).reduce((a,x)=>a+x.ml,0)}
 function aguaUlt(){const L=S.agua.log[iso(today)]||[];return L.length?L[L.length-1].t:0}
-const fL=ml=>(ml/1000).toLocaleString('pt-BR',{minimumFractionDigits:ml%1000?1:0,maximumFractionDigits:2})+' L';
+const fL=ml=>ml<1000?ml+' ml':(ml/1000).toLocaleString('pt-BR',{minimumFractionDigits:ml%1000?1:0,maximumFractionDigits:2})+' L';
 function agoTxt(t){const m=Math.round((Date.now()-t)/60000);return m<1?'agora':m<60?`há ${m} min`:`há ${Math.floor(m/60)}h${m%60?String(m%60).padStart(2,'0'):''}`}
 function aguaInfo(){const c=S.agua.cfg,v=aguaDia(iso(today)),m=aguaMeta(),p=Math.min(100,Math.round(v/m*100)),u=aguaUlt();
   return `<div class="ag-v"><b>${fL(v)}</b><span>de ${fL(m)}</span></div>
     <div class="ag-p">${v>=m?'✓ Meta batida!':`Faltam ${fL(m-v)} · ${p}%`}</div>
     <div class="ag-l">${u?'Último gole '+agoTxt(u):'Nenhum copo ainda hoje'}${c.lemb?` · ${ic('bell')} a cada ${c.cada>=60?(c.cada/60).toLocaleString('pt-BR')+'h':c.cada+' min'}`:''}</div>`}
 function aguaWeek(){let h='';for(let i=6;i>=0;i--){const d=addDays(today,-i),v=aguaDia(iso(d)),ok=v>=aguaMeta();
-  h+=`<i class="${ok?'ok':v?'mid':''}${i===0?' hj':''}" title="${fL(v)}"><span style="height:${Math.min(100,v/aguaMeta()*100)}%"></span><em>${DN[d.getDay()][0]}</em></i>`}return h}
+  h+=`<i class="${ok?'ok':v?'mid':''}${i===0?' hj':''}" title="${fL(v)}"><span style="height:${Math.min(100,v/aguaMeta()*100)}%"></span><em>${DN[d.getDay()]}</em></i>`}return h}
 function aguaCard(){const c=S.agua.cfg,p=Math.min(1,aguaDia(iso(today))/aguaMeta());
   return `<section class="panel hagua"><div class="hsec"><h2>${ic('drop')} Água</h2><button class="lnk ag-cfg" data-aguacfg="1" aria-label="Ajustar água e lembretes">${ic(c.lemb?'bell':'bellx')} ${c.lemb?'Lembretes':'Ativar lembretes'}</button></div>
     <div class="ag-top"><div class="ag-glass"><svg viewBox="0 0 60 84" aria-hidden="true"><defs><clipPath id="agClip"><path d="M6 4h48l-5 72a6 6 0 0 1-6 5H17a6 6 0 0 1-6-5z"/></clipPath></defs>
@@ -2046,7 +2056,7 @@ function selBar(ck,i,anim=true){
       <div class="cd-r"><span>Sessões no período</span><b>${L.length}</b></div>${L.length?`<div class="cd-r"><span>Média por sessão</span><b>${Math.round((tk+ak)/L.length)} kcal</b></div>`:''}`}
   if(k==='vol'){const per2={};Object.entries(S.hist).forEach(([ek,H])=>H.forEach(hh=>{if(hh.date>=d.s&&hh.date<d.e&&hh.kg>0&&EX[ek]){per2[ek]=(per2[ek]||0)+hh.kg*hh.reps.reduce((a,b)=>a+b,0)}}));
     const top=Object.entries(per2).sort((a,b)=>b[1]-a[1]).slice(0,4),mx=top.length?top[0][1]:1;
-    x+=top.length?`<p class="cd-s">Exercícios que mais somaram</p>`+top.map(([ek,vv])=>`<div class="cd-r"><span>${esc(EX[ek].n)}</span><b>${nf(vv,' kg')}</b></div><div class="cd-mini"><i style="width:${vv/mx*100}%"></i></div>`).join(''):'<p class="cd-s">Sem cargas registradas nesse período.</p>'}
+    x+=top.length?`<p class="cd-s">Exercícios que mais somaram</p>`+top.map(([ek,vv])=>`<div class="cd-r"><span>${esc(EX[ek].n)}</span><b>${nf(vv,' kg')}</b></div><div class="cd-mini"><i style="width:${vv/mx*100}%"></i></div>`).join(''):'<p class="cd-s">O detalhe por exercício aparece quando você registra as cargas no treino.</p>'}
   if(k==='n'){const ds=[...new Set(L.filter(isTreino).map(l=>l.date))].sort();
     x+=`<div class="cd-r"><span>Dias treinados</span><b>${ds.length?ds.map(z=>DN[new Date(z+'T12:00:00').getDay()]).join(', '):'nenhum'}</b></div>`;
     if(per==='semana'){const np=Object.keys(weekPlan()).length;x+=`<div class="cd-r"><span>Meta da semana</span><b>${v}/${np} ${v>=np?'✓':''}</b></div><div class="cd-mini"><i style="width:${Math.min(100,v/np*100)}%"></i></div>`}
