@@ -495,7 +495,7 @@ const fkg=x=>x.toLocaleString('pt-BR',{maximumFractionDigits:1});
 function stepOf(k){const e=EX[k];if(e.t!=='base')return 2;return /Quadr|Posterior|Glút/.test(e.m)?5:2.5}
 function range(goal){const g=GOALS[goal||S.profile.objetivo];const [lo,hi]=g.reps.split('–').map(Number);return{lo,hi}}
 function suggest(k){
-  const {lo,hi}=range(),H=(S.hist[k]||[]).filter(x=>x.date<iso(today)),last=H[H.length-1],ph=phaseOf(weekIndex());
+  const {lo,hi}=range(),H=(S.hist[k]||[]).filter(x=>x.date<iso(today)&&!x.ex),last=H[H.length-1],ph=phaseOf(weekIndex());
   if(EX[k].bw)return{kg:null,target:hi,msg:'Peso do corpo. Tente chegar ao topo da faixa.',kind:'keep'};
   if(!last)return{kg:null,target:lo,msg:'Primeira vez: escolha uma carga em que as últimas reps fiquem difíceis.',kind:'new'};
   const mn=Math.min(...last.reps),allTop=last.reps.length&&last.reps.every(r=>r>=hi),step=stepOf(k);
@@ -1171,6 +1171,7 @@ function saveWelcome(){
     /* desloca o histórico de exemplo para perto do peso informado */
     const exs=S.peso.filter(x=>x.ex);if(exs.length){const d=kg-exs[exs.length-1].kg;exs.forEach(x=>x.kg=Math.round((x.kg+d)*10)/10)}
     S.peso=S.peso.filter(x=>x.date!==iso(today));S.peso.push({date:iso(today),kg})}
+  if(!S.logs.some(l=>!l.ex))S.profile.inicio=iso(addDays(today,-((today.getDay()+6)%7)));
   S.onboarded=true;save();render();
 }
 function showStep(){
@@ -1205,6 +1206,10 @@ addEventListener('resize',()=>{if(tStep>=0)showStep()});
 document.addEventListener('click',e=>{if(e.target.closest('#tourAgain'))startTour()});
 
 render();
+/* correção: quem ainda não treinou começa o ciclo na semana 1 */
+if(!S.fixInicio){if(!S.logs.some(l=>!l.ex))S.profile.inicio=iso(addDays(today,-((today.getDay()+6)%7)));S.fixInicio=true;save()}
+/* pede ao navegador para não apagar os dados do app */
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 if(!S.onboarded)welcome();
 </script>
 <script>
