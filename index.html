@@ -1693,7 +1693,7 @@ async function shareCard(){
   x.fillStyle=LN;rr(104,by+140,W-208,10,5);x.fill();x.fillStyle=A;rr(104,by+140,Math.max(10,(W-208)*Math.min(1,cur.n/np)),10,5);x.fill();
   /* rodapé */
   x.font=`600 28px ${body}`;x.fillStyle=M;x.textAlign='center';
-  x.fillText(sk?`🔥 ${sk} ${sk>1?'semanas seguidas':'semana'} treinando  ·  raphaelhxd.github.io/suor-e-gloria`:'raphaelhxd.github.io/suor-e-gloria',W/2,H-70);x.textAlign='left';
+  x.fillText(sk?`🔥 ${sk} ${sk>1?'semanas seguidas':'semana'} treinando`:'Bora pro próximo! 💪',W/2,H-70);x.textAlign='left';
   const text=`Treino concluído no Suor & Glória! ${d.ses}: ${d.kcal} kcal em ${d.min} min.${d.prs.length?' Novo recorde: '+d.prs[0]+'.':''}`;
   const blob=await new Promise(r=>c.toBlob(r,'image/png'));
   try{const file=new File([blob],'treino-suor-e-gloria.png',{type:'image/png'});
