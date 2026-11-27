@@ -172,6 +172,20 @@ label.btn{display:inline-block;text-align:center}
 .pick span{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:24px;height:24px;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center;background:var(--teal);font-family:var(--f-display);font-size:16px}
 .pick small{display:block;font-weight:600;font-size:12px;color:var(--muted)}
 .pick.has{opacity:.55;cursor:default}
+#tour{position:fixed;inset:0;z-index:30}
+#tour[hidden]{display:none!important}
+.tour-w{background:rgba(22,17,31,.82);display:grid;place-items:center;overflow-y:auto;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.wcard{background:var(--paper);border:3px solid var(--ink);border-radius:6px;box-shadow:6px 6px 0 var(--ink);padding:18px;width:100%;max-width:420px}
+.wcard .goal{padding:8px;font-size:14px}
+.linkb{display:block;margin:12px auto 0;background:none;border:0;font:800 14px var(--f-label);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);cursor:pointer;text-decoration:underline}
+.spot{position:fixed;border:4px solid var(--yellow);border-radius:8px;box-shadow:0 0 0 9999px rgba(22,17,31,.78);transition:all .25s ease;pointer-events:none}
+.spot.none{top:50%;left:50%;width:0;height:0;border:0}
+.bubble{position:fixed;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));max-width:428px;margin:0 auto;background:var(--paper);border:3px solid var(--ink);border-radius:8px;box-shadow:5px 5px 0 var(--ink);padding:14px}
+.bubble.b-bot{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.bubble.b-top{top:calc(16px + env(safe-area-inset-top,0px))}
+.bubble h3{font-size:26px;margin:8px 0 4px}
+.bubble p{margin:0 0 12px;line-height:1.4}
+@media (prefers-reduced-motion:reduce){.spot{transition:none}}
 .chart svg:not(.ic){width:100%;height:auto;display:block}
 .chart .cap{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .chart .cap b{font-family:var(--f-display);font-weight:400;font-size:28px;font-variant-numeric:tabular-nums}
@@ -198,6 +212,7 @@ nav button.on{background:var(--yellow);color:var(--ink);border-color:var(--paper
   <main id="view"></main>
 </div>
 
+<div id="tour" hidden></div>
 <nav aria-label="Navegação principal"><div class="in">
   <button data-go="hoje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/></svg>Hoje</button>
   <button data-go="treinos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/></svg>Treinos</button>
@@ -316,7 +331,7 @@ function seed(){
     [1,3,5].forEach((dd,i)=>{const dt=addDays(ws,dd-1);if(dt<today)logs.push({date:iso(dt),ses:['FA','FB','FC'][i],kcal:Math.round(kcalW[w]/3),vol:Math.round(volW[w]/3),ex:true})});
     peso.push({date:iso(ws),kg:pesoW[w],ex:true});
   }
-  return {profile:{nome:'Raphael',peso:84.3,idade:32,altura:178,objetivo:'emagrecer',dias:[false,true,false,true,false,true,false],inicio:iso(addDays(today,-7*5-today.getDay()+1))},logs,peso,draft:{}};
+  return {profile:{nome:'',peso:75,idade:30,altura:178,objetivo:'emagrecer',dias:[false,true,false,true,false,true,false],inicio:iso(addDays(today,-7*5-today.getDay()+1))},logs,peso,draft:{}};
 }
 /* Histórico de exemplo de cargas (6 semanas), marcado como exemplo */
 function seedHist(){
@@ -405,7 +420,8 @@ function suggest(k){
 }
 function exDraft(e){
   const d=S.d2[iso(today)]=S.d2[iso(today)]||{};
-  if(!d[e.k]){const sg=suggest(e.k);d[e.k]={kg:sg.kg,reps:Array(e.sets).fill(null),target:sg.target}}
+  /* enquanto nenhuma série foi marcada, a sugestão acompanha mudanças de objetivo ou de fase */
+  if(!d[e.k]||(!d[e.k].touched&&d[e.k].reps.every(r=>r===null))){const sg=suggest(e.k);d[e.k]={kg:sg.kg,reps:Array(e.sets).fill(null),target:sg.target}}
   const x=d[e.k];while(x.reps.length<e.sets)x.reps.push(null);x.reps.length=e.sets;return x;
 }
 
@@ -656,7 +672,8 @@ function vPerfil(){
       ${Object.entries(GOALS).map(([k,g])=>`<button class="goal ${p.objetivo===k?'on':''}" data-goal="${k}" aria-pressed="${p.objetivo===k}">${ic(GI[k])}${g.n}<small>${g.d}</small></button>`).join('')}
     </div><p class="note">O objetivo muda as repetições, o descanso e se entra cardio no fim do treino.</p></section>
     <button class="btn" id="saveP">Salvar perfil</button>
-    <p class="note" style="color:var(--paper);margin-top:12px">Protótipo: os dados ficam salvos só neste aparelho.</p>`;
+    <button class="btn y" id="tourAgain" style="margin-top:14px">${ic('target')} Ver o tour do app</button>
+    <p class="note" style="color:var(--paper);margin-top:12px">Seus dados ficam salvos só neste aparelho.</p>`;
 }
 
 /* ---------- Render e eventos ---------- */
@@ -717,7 +734,7 @@ document.addEventListener('click',e=>{
     const r=x.reps[i];x.reps[i]=r===null?tg:(e.cardio||e.iso||r<=1?null:r-1);save();render();
     const nb=document.querySelector(`[data-bub="${e.k}"][data-i="${i}"]`);if(nb&&x.reps[i]===tg)nb.classList.add('pow');return}
   if(t.dataset.all){const e=curEx(t.dataset.all),x=exDraft(e);x.reps=x.reps.map(()=>e.iso?45:x.target);save();render();return}
-  if(t.dataset.stp){const e=curEx(t.dataset.stp),x=exDraft(e),st=stepOf(e.k);x.kg=Math.max(0,r05((x.kg||0)+st*(+t.dataset.d)));save();
+  if(t.dataset.stp){const e=curEx(t.dataset.stp),x=exDraft(e),st=stepOf(e.k);x.kg=Math.max(0,r05((x.kg||0)+st*(+t.dataset.d)));x.touched=true;save();
     const inp=document.getElementById('kg-'+e.k);if(inp)inp.value=fkg(x.kg);return}
   if(t.id==='finish'){
     const code=weekPlan()[today.getDay()],exs=sessionFor(code);
@@ -743,10 +760,81 @@ document.addEventListener('change',e=>{if(e.target.id==='pFoto'&&e.target.files[
 function curEx(k){return sessionFor(weekPlan()[today.getDay()]).find(e=>e.k===k)}
 document.addEventListener('input',e=>{
   const t=e.target;if(!t.dataset.kg)return;const x=exDraft(curEx(t.dataset.kg));
-  const v=parseFloat(t.value.replace(',','.'));x.kg=isNaN(v)?null:v;save();
+  const v=parseFloat(t.value.replace(',','.'));x.kg=isNaN(v)?null:v;x.touched=true;save();
 });
 const h0=(location.hash||'').slice(1);if(['hoje','treinos','semana','evolucao','perfil'].includes(h0))view=h0;
+/* ---------- Boas-vindas e tour guiado ---------- */
+const TOUR=[
+  {v:'hoje',sel:'.panel.burst',t:'Seu painel',x:'Aqui você vê a semana do ciclo, quantos treinos já fez, as calorias gastas e seu peso.'},
+  {v:'hoje',sel:'.ex .load',t:'Carga sugerida',x:'O app já sugere a carga com base no seu último treino. Ajuste com − e + sem precisar digitar.',miss:'Nos dias de treino, cada exercício mostra a carga sugerida com base no último treino.'},
+  {v:'hoje',sel:'.ex .setrow',t:'Um toque por série',x:'Terminou a série? Toque na bolinha. Fez menos reps que a meta? Toque de novo para tirar 1. "Fiz todas" marca tudo de uma vez.',miss:'Nos dias de treino, você marca cada série com um toque.'},
+  {v:'hoje',sel:'#finish',t:'Concluir treino',x:'No fim, toque aqui. O app salva as cargas, calcula as calorias e prepara a progressão do próximo treino.',miss:'No fim do treino, um botão salva tudo e calcula as calorias.'},
+  {v:'treinos',sel:'.panel',t:'Meus treinos',x:'Monte um treino do zero ou personalize um pronto: escolha exercícios, séries, ordem e dias.'},
+  {v:'treinos',sel:'.goals',t:'Treinos prontos',x:'Escolha o objetivo e quantos dias treina. O app divide por grupos musculares que trabalham juntos.'},
+  {v:'semana',sel:'.days',t:'Seus dias',x:'Marque os dias em que pode treinar. A semana se reorganiza sozinha.'},
+  {v:'semana',sel:'.phase',t:'Ciclo de 12 semanas',x:'O treino muda de fase a cada semana: adaptação, acúmulo, intensificação e uma semana leve para recuperar.'},
+  {v:'evolucao',sel:'.chart',t:'Sua evolução',x:'Gráficos de calorias, volume, peso e progressão de carga. Os dados de exemplo podem ser apagados no fim da página.'},
+  {v:'perfil',sel:'.photo',t:'Seu perfil',x:'Coloque sua foto, atualize o peso e troque o objetivo quando quiser. O tour pode ser revisto aqui embaixo. Bom treino!'}
+];
+let tStep=-1;
+const TEl=$('#tour');
+function welcome(){
+  const p=S.profile;
+  TEl.hidden=false;TEl.className='tour-w';
+  TEl.innerHTML=`<div class="wcard pow" role="dialog" aria-modal="true" aria-labelledby="wT">
+    <div class="logo" style="font-size:44px">SUOR &amp;<small style="font-size:22px">GLÓRIA!</small></div>
+    <h2 id="wT" style="margin:10px 0 4px">Bem-vindo!</h2>
+    <p style="margin:0 0 10px">Conta um pouco sobre você para o app montar seus treinos.</p>
+    <div class="row">
+      <div class="field" style="flex-basis:100%"><label for="wNome">Seu nome</label><input id="wNome" value="${esc(p.nome||'')}" placeholder="Como quer ser chamado?"></div>
+      <div class="field"><label for="wPeso">Peso (kg)</label><input id="wPeso" inputmode="decimal" value="${fkg(p.peso)}"></div>
+      <div class="field"><label for="wIdade">Idade</label><input id="wIdade" inputmode="numeric" value="${p.idade}"></div>
+    </div>
+    <p class="lbl">Seu objetivo</p>
+    <div class="goals">${Object.entries(GOALS).map(([k,g])=>`<button class="goal ${p.objetivo===k?'on':''}" data-wgoal="${k}">${ic(GI[k])}${g.n}</button>`).join('')}</div>
+    <button class="btn" id="wGo" style="margin-top:14px">Começar o tour</button>
+    <button class="linkb" id="wSkip">Pular o tour</button>
+  </div>`;
+}
+function saveWelcome(){
+  const n=$('#wNome').value.trim(),kg=parseFloat($('#wPeso').value.replace(',','.')),id=parseInt($('#wIdade').value);
+  if(n)S.profile.nome=n;if(id>0)S.profile.idade=id;
+  if(kg>0){S.profile.peso=kg;S.peso=S.peso.filter(x=>x.date!==iso(today));S.peso.push({date:iso(today),kg})}
+  S.onboarded=true;save();render();
+}
+function showStep(){
+  const st=TOUR[tStep];if(!st){endTour();return}
+  if(view!==st.v)go(st.v);
+  const el=document.querySelector(st.sel);
+  TEl.hidden=false;TEl.className='tour-s';
+  if(el){el.scrollIntoView({block:'center'});}
+  requestAnimationFrame(()=>{
+    const r=el?el.getBoundingClientRect():null,pad=8;
+    const spot=r?`<div class="spot" style="top:${r.top-pad}px;left:${r.left-pad}px;width:${r.width+pad*2}px;height:${Math.min(r.height+pad*2,innerHeight*0.6)}px"></div>`:'<div class="spot none"></div>';
+    const below=!r||r.top<innerHeight*0.45;
+    TEl.innerHTML=spot+`<div class="bubble pow ${below?'b-bot':'b-top'}" role="dialog" aria-live="polite">
+      <div class="row" style="justify-content:space-between"><span class="tag p">${tStep+1} de ${TOUR.length}</span><button class="linkb" id="tSkip" style="margin:0">Pular</button></div>
+      <h3>${st.t}</h3><p>${el?st.x:(st.miss||st.x)}</p>
+      <div class="row" style="justify-content:space-between">${tStep>0?'<button class="btn small y" id="tBack">Voltar</button>':'<span></span>'}
+      <button class="btn small" id="tNext">${tStep===TOUR.length-1?'Bora treinar!':'Próximo'}</button></div></div>`;
+  });
+}
+function startTour(){tStep=0;showStep()}
+function endTour(){tStep=-1;TEl.hidden=true;TEl.innerHTML='';TEl.className='';S.tourDone=true;save();go('hoje')}
+TEl.addEventListener('click',e=>{
+  const t=e.target.closest('button');e.stopPropagation();if(!t)return;
+  if(t.dataset.wgoal){S.profile.objetivo=t.dataset.wgoal;TEl.querySelectorAll('[data-wgoal]').forEach(b=>b.classList.toggle('on',b===t));return}
+  if(t.id==='wGo'){saveWelcome();startTour();return}
+  if(t.id==='wSkip'){saveWelcome();endTour();return}
+  if(t.id==='tNext'){tStep++;showStep();return}
+  if(t.id==='tBack'){tStep--;showStep();return}
+  if(t.id==='tSkip'){endTour();return}
+});
+addEventListener('resize',()=>{if(tStep>=0)showStep()});
+document.addEventListener('click',e=>{if(e.target.closest('#tourAgain'))startTour()});
+
 render();
+if(!S.onboarded)welcome();
 </script>
 <script>
 if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
