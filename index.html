@@ -333,6 +333,29 @@ nav button.on{background:transparent;border-color:transparent;color:var(--text)}
 @keyframes spin{from{transform:rotate(-90deg) scale(.2)}to{transform:rotate(0) scale(1)}}
 .scene{width:100%;height:auto;display:block;border-radius:6px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* ---------- Menu lateral ---------- */
+.who{gap:8px}
+.menub{order:3;flex:none;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);display:grid;place-items:center;cursor:pointer;padding:0}
+.menub svg{width:22px;height:22px}
+#drawer{position:fixed;inset:0;z-index:28}
+#drawer[hidden]{display:none!important}
+.dr-bg{position:absolute;inset:0;background:rgba(4,5,7,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);animation:fadeIn .2s both}
+.dr{position:absolute;top:0;bottom:0;right:0;width:min(300px,84vw);background:var(--paper);border-left:1px solid var(--line);display:flex;flex-direction:column;
+  padding:calc(18px + env(safe-area-inset-top,0px)) 14px calc(18px + env(safe-area-inset-bottom,0px));overflow-y:auto;animation:drIn .28s cubic-bezier(.2,.9,.3,1) both;box-shadow:-20px 0 60px rgba(0,0,0,.4)}
+.dr.out{animation:drOut .2s ease-in forwards}.dr-bg.out{animation:fadeOut .2s forwards}
+@keyframes drIn{from{transform:translateX(100%)}}@keyframes drOut{to{transform:translateX(100%)}}
+.dr-h{display:flex;align-items:center;gap:10px;margin:0 4px 14px}
+.dr-h .av{width:44px;height:44px;font-size:18px;cursor:default}
+.dr-h b{display:block;font:700 20px var(--f-display);text-transform:uppercase}
+.dr-h small{color:var(--muted);font-size:12px}
+.dr-x{margin-left:auto;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);cursor:pointer;font-size:16px}
+.dr-s{font:700 11px var(--f-label);text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:14px 6px 6px}
+.dr-i{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;border-radius:12px;padding:11px 10px;color:var(--text);font:600 15px var(--f-body);cursor:pointer}
+.dr-i svg{width:20px;height:20px;flex:none;color:var(--muted)}
+.dr-i:hover,.dr-i:focus-visible{background:var(--card2)}
+.dr-i.on{background:var(--acc-soft);color:var(--acc)}.dr-i.on svg{color:var(--acc)}
+.dr-f{margin-top:auto;padding:16px 6px 0;color:var(--muted);font-size:12px;line-height:1.4}
+.all.undo{background:var(--card2);color:var(--muted);border:1px solid var(--line)}
 .chart svg:not(.ic){width:100%;height:auto;display:block}
 .chart .cap{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .chart .cap b{font-family:var(--f-display);font-weight:700;text-transform:uppercase;font-weight:700;font-size:28px;font-variant-numeric:tabular-nums}
@@ -485,7 +508,7 @@ nav button.on{color:var(--ink)}
 <div class="app">
   <header class="top">
     <div class="logo">SUOR &amp;<small>GLÓRIA!</small></div>
-    <div class="who"><div class="hello">Fala,<b id="hiName">Raphael</b></div><button class="av" id="hiAv" data-go="perfil" aria-label="Abrir perfil"></button></div>
+    <div class="who"><button class="menub" id="menuBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button><div class="hello">Fala,<b id="hiName">Raphael</b></div><button class="av" id="hiAv" data-go="perfil" aria-label="Abrir perfil"></button></div>
   </header>
   <main id="view"></main>
 </div>
@@ -493,6 +516,7 @@ nav button.on{color:var(--ink)}
 <div id="tour" hidden></div>
 <div id="rest" hidden></div>
 <div id="sheet" hidden></div>
+<div id="drawer" hidden></div>
 <div id="celebrate" hidden></div>
 <nav aria-label="Navegação principal"><div class="in">
   <button data-go="hoje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/></svg>Hoje</button>
@@ -784,13 +808,13 @@ function vHoje(){
       if(e.k===wuK&&x.kg>=20)h+=warmup(e,x);
       const unit=e.iso?'s':'';
       h+=`<div class="setrow">${x.reps.map((r,i)=>`<button class="bub ${r!==null?'on':''} ${r!==null&&r<x.target?'less':''}" data-bub="${e.k}" data-i="${i}" aria-label="Série ${i+1}">${r!==null?`<b>${r}${unit}</b><small>feito</small>`:`<b>${e.iso?'45s':x.target}</b><small>série ${i+1}</small>`}</button>`).join('')}
-        <button class="all" data-all="${e.k}">${done===e.sets?'Feito!':'Fiz todas'}</button></div>`;
+        <button class="all ${done===e.sets?'undo':''}" data-all="${e.k}">${done===e.sets?'↺ Desmarcar':'Fiz todas'}</button></div>`;
     }
     h+=`</div></div>`;
   });
   h+=`<p class="note">Toque na série para marcar que fez a meta. Fez menos? Toque de novo para tirar 1 rep.</p>`;
   h+=`<div style="margin-top:14px">${doneToday?`<p class="tag" style="margin-bottom:8px">Treino de hoje já registrado: ${doneToday.kcal} kcal</p>`:''}
-    <button class="btn" id="finish">${doneToday?'Atualizar registro':'Concluir treino!'}</button></div></section>`;
+    <button class="btn" id="finish">${doneToday?'Atualizar registro':'Concluir treino!'}</button>${doneToday?'<button class="linkb" id="undoFinish">Desfazer registro de hoje</button>':''}</div></section>`;
   return h;
 }
 
@@ -1052,7 +1076,8 @@ document.addEventListener('click',e=>{
     const r=x.reps[i];x.reps[i]=r===null?tg:(e.cardio||e.iso||r<=1?null:r-1);save();render();
     if(r===null&&!e.cardio)startRest(GOALS[S.profile.objetivo].rest);
     const nb=document.querySelector(`[data-bub="${e.k}"][data-i="${i}"]`);if(nb&&x.reps[i]===tg)nb.classList.add('pow');return}
-  if(t.dataset.all){const e=curEx(t.dataset.all),x=exDraft(e);x.reps=x.reps.map(()=>e.iso?45:x.target);save();render();return}
+  if(t.dataset.all){const e=curEx(t.dataset.all),x=exDraft(e),full=x.reps.every(r=>r!==null);
+    x.reps=x.reps.map(()=>full?null:(e.iso?45:x.target));if(full){openDone.delete(e.k);toast('Exercício desmarcado')}save();render();return}
   if(t.dataset.stp){const e=curEx(t.dataset.stp),x=exDraft(e),st=stepOf(e.k);x.kg=Math.max(0,r05((x.kg||0)+st*(+t.dataset.d)));x.touched=true;save();
     const inp=document.getElementById('kg-'+e.k);if(inp)inp.value=fkg(x.kg);return}
   if(t.id==='finish'){
@@ -1073,6 +1098,10 @@ document.addEventListener('click',e=>{
     const newAch=checkAch();save();stopRest();releaseAwake();
     lastShare={ses:SES[code].n,kcal,min:est.min,vol:Math.round(vol),prs,ach:newAch.map(a=>a.n)};
     render();celebrate(kcal,prs,newAch);return}
+  if(t.id==='undoFinish'){const d=iso(today);
+    S.logs=S.logs.filter(l=>!(l.date===d&&!l.ex&&!l.atv));
+    Object.keys(S.hist).forEach(k=>{S.hist[k]=S.hist[k].filter(h=>h.date!==d||h.ex);if(!S.hist[k].length)delete S.hist[k]});
+    save();render();toast('Registro desfeito');return}
   if(t.id==='saveP'){
     const n=parseFloat($('#pPeso').value.replace(',','.'));
     S.profile.nome=$('#pNome').value.trim()||'atleta';
@@ -1538,7 +1567,7 @@ document.addEventListener('click',e=>{
   if(t){const k=t.dataset.exopen;openDone.has(k)?openDone.delete(k):openDone.add(k);render();return}
   const b=e.target.closest('button');if(!b)return;
   if(b.dataset.bub||b.dataset.all){
-    const k=b.dataset.bub||b.dataset.all,i=b.dataset.i,x=exDraft(curEx(k)),on=b.dataset.bub?x.reps[+i]!==null:true;
+    const k=b.dataset.bub||b.dataset.all,i=b.dataset.i,x=exDraft(curEx(k)),on=b.dataset.bub?x.reps[+i]!==null:x.reps.some(r=>r!==null);
     if(!on)return;
     try{navigator.vibrate&&navigator.vibrate(25)}catch(err){}
     const exEl=document.querySelector(`.ex[data-ex="${k}"]`);
@@ -1580,6 +1609,67 @@ const SCENE={
   empty:`<svg class="scene" viewBox="0 0 240 110" aria-hidden="true"><rect x="1" y="1" width="238" height="108" rx="12" fill="#1f2329" stroke="#2a3038" stroke-width="1.5"/>
     <g fill="none" stroke="#c6f135" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M84 55h72"/><rect x="70" y="40" width="12" height="30" rx="3"/><rect x="158" y="40" width="12" height="30" rx="3"/><path d="M62 47v16M178 47v16"/></g></svg>`
 };
+
+
+/* ---------- Menu lateral ---------- */
+const drawerEl=document.getElementById('drawer'),menuBtn=document.getElementById('menuBtn');
+const DI=(p)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const DRI={
+  hoje:DI('<path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/>'),
+  treinos:DI('<path d="M5 4h14v16H5zM9 9h6M9 13h6M9 17h3"/>'),
+  semana:DI('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'),
+  evolucao:DI('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  historico:DI('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+  perfil:DI('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>'),
+  swap:DI('<path d="M4 8h13l-3-3M20 16H7l3 3"/>'),
+  act:DI('<path d="M12 21s-8-5-8-11a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 6-8 11-8 11z"/>'),
+  plus:DI('<path d="M12 5v14M5 12h14"/>'),
+  tour:DI('<circle cx="12" cy="12" r="9"/><path d="M12 16v.01M12 13a2.5 2.5 0 1 0-2.5-2.5"/>')
+};
+function openDrawer(){
+  const nm=(S.profile.nome&&S.profile.nome!=='atleta')?S.profile.nome:'Atleta',ini=esc(nm.trim()[0]||'A').toUpperCase();
+  const it=(attr,ico,lbl,on)=>`<button class="dr-i ${on?'on':''}" ${attr}>${DRI[ico]}${lbl}</button>`;
+  const cur=view==='editor'?'treinos':view;
+  drawerEl.innerHTML=`<div class="dr-bg" data-drclose="1"></div><aside class="dr" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="dr-h"><span class="av">${S.profile.foto?`<img src="${S.profile.foto}" alt="">`:ini}</span><div><b>${esc(nm)}</b><small>${esc((GOALS[S.profile.objetivo]||{}).n||'')}</small></div><button class="dr-x" data-drclose="1" aria-label="Fechar menu">✕</button></div>
+    <div class="dr-s">Navegar</div>
+    ${it('data-go="hoje"','hoje','Treino de hoje',cur==='hoje')}
+    ${it('data-go="semana"','semana','Minha semana',cur==='semana')}
+    ${it('data-go="treinos"','treinos','Treinos prontos e meus treinos',cur==='treinos')}
+    ${it('data-go="evolucao"','evolucao','Evolução e recuperação',cur==='evolucao')}
+    ${it('data-go="historico"','historico','Histórico de treinos',cur==='historico')}
+    ${it('data-go="perfil"','perfil','Perfil, medidas e backup',cur==='perfil')}
+    <div class="dr-s">Atalhos</div>
+    ${it('data-drpick="1"','swap','Trocar o treino de hoje')}
+    ${it('data-dract="1"','act','Registrar outra atividade')}
+    ${it('data-drnew="1"','plus','Criar treino do zero')}
+    ${it('data-drtour="1"','tour','Ver o tour do app')}
+    <p class="dr-f">Suor &amp; Glória · seus dados ficam só neste aparelho.</p></aside>`;
+  drawerEl.hidden=false;menuBtn.setAttribute('aria-expanded','true');
+  const f=drawerEl.querySelector('.dr-i.on')||drawerEl.querySelector('.dr-i');f&&f.focus({preventScroll:true});
+}
+function closeDrawer(now){
+  if(drawerEl.hidden)return;menuBtn.setAttribute('aria-expanded','false');
+  const dr=drawerEl.querySelector('.dr');
+  if(now||RM||!dr){drawerEl.hidden=true;drawerEl.innerHTML='';return}
+  dr.classList.add('out');drawerEl.querySelector('.dr-bg').classList.add('out');
+  setTimeout(()=>{if(drawerEl.querySelector('.dr')===dr){drawerEl.hidden=true;drawerEl.innerHTML=''}},200);
+}
+menuBtn.addEventListener('click',e=>{e.stopPropagation();drawerEl.hidden?openDrawer():closeDrawer()});
+drawerEl.addEventListener('click',e=>{
+  const t=e.target.closest('[data-drclose],.dr-i');if(!t)return;
+  if(t.dataset.drclose){closeDrawer();return}
+  closeDrawer(true);
+  if(t.dataset.drpick){if(view!=='hoje')go('hoje');pickSheet();e.stopPropagation()}
+  else if(t.dataset.dract){if(view!=='hoje')go('hoje');actSheet();e.stopPropagation()}
+  else if(t.dataset.drtour){e.stopPropagation();startTour()}
+  else if(t.dataset.drnew){e.stopPropagation();go('treinos');setTimeout(()=>{const b=document.querySelector('#view [data-new]');b&&b.click()},30)}
+});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!drawerEl.hidden)closeDrawer()});
+/* arrastar para a direita fecha */
+let dx0=null;
+drawerEl.addEventListener('touchstart',e=>{dx0=e.touches[0].clientX},{passive:true});
+drawerEl.addEventListener('touchend',e=>{if(dx0!==null&&e.changedTouches[0].clientX-dx0>70)closeDrawer();dx0=null});
 
 /* ---------- Boas-vindas e tour guiado ---------- */
 const TOUR=[
