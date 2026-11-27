@@ -629,6 +629,33 @@ nav button.on svg{animation:navPop .35s cubic-bezier(.2,1.6,.4,1)}
 .ib .ic.icb{width:28px;height:28px}
 .mus .ic.icb,.tag .ic.icb{width:18px;height:18px}
 .pi .ic{color:var(--acc)}.pi .ic.icb{width:20px;height:20px}
+
+/* ---------- Gráficos interativos ---------- */
+.chart rect.hit,.chart circle.hitc{cursor:pointer}
+.chart rect.bar{transition:fill .25s,opacity .25s;pointer-events:none}
+.chart text.bv{transition:fill .25s,opacity .25s;pointer-events:none}
+.chart.sel text.bv{opacity:.55}.chart.sel text.bv.on{opacity:1;fill:#c6f135}
+.chart circle.pt{transition:r .2s,fill .2s;pointer-events:none}
+.chart.swap svg rect.bar{animation:grow .5s cubic-bezier(.2,1.2,.4,1) both}
+.seg{display:inline-flex;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:3px;margin:2px 0 8px}
+.seg button{border:0;background:none;color:var(--muted);font:600 12px var(--f-body);padding:5px 12px;border-radius:999px;cursor:pointer;transition:background-color .2s,color .2s}
+.seg button.on{background:var(--acc);color:var(--ink)}
+.cd{margin-top:10px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px}
+.cd.pop{animation:cdIn .35s cubic-bezier(.2,1,.3,1) both}
+@keyframes cdIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.cd-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}.cd-h b{font:700 16px var(--f-display);text-transform:uppercase}.cd-h span{color:var(--muted);font-size:12px;text-transform:capitalize}
+.cd-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cd-c{background:var(--paper);border-radius:10px;padding:8px 10px;min-width:0}
+.cd-c small{display:block;color:var(--muted);font:700 10px var(--f-label);text-transform:uppercase;letter-spacing:.07em}
+.cd-c b{display:block;font:700 22px var(--f-display);line-height:1.15}.cd-c b.up{color:var(--acc)}.cd-c b.dn{color:var(--bad)}
+.cd-c em{font-style:normal;color:var(--muted);font-size:11px}
+.cd-x{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+.cd-r{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:5px 0;font-size:13px}.cd-r span{color:var(--muted);display:flex;align-items:center;gap:6px}.cd-r b{font-weight:700;text-align:right}
+.cd-s{margin:4px 0 2px;color:var(--muted);font:700 11px var(--f-label);text-transform:uppercase;letter-spacing:.07em}
+.cd-bar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--line);margin:2px 0 6px}.cd-bar i{display:block;background:var(--acc);transition:width .4s}.cd-bar i.b{background:#6e8a1f}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}.dot.a{background:var(--acc)}.dot.b{background:#6e8a1f}
+.cd-mini{height:4px;border-radius:99px;background:var(--line);overflow:hidden;margin:0 0 4px}.cd-mini i{display:block;height:100%;background:var(--acc);border-radius:99px;animation:mini .5s ease-out both}
+@keyframes mini{from{width:0}}
 </style>
 </head>
 <body>
@@ -1102,20 +1129,21 @@ function weeks(){
   for(let i=5;i>=0;i--){const s=addDays(mon,-7*i),e=addDays(s,7);
     const L=S.logs.filter(l=>l.date>=iso(s)&&l.date<iso(e)),LT=L.filter(isTreino);
     const P=S.peso.filter(p=>p.date>=iso(s)&&p.date<iso(e));
-    out.push({lbl:s.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),kcal:L.reduce((a,l)=>a+l.kcal,0),vol:L.reduce((a,l)=>a+(l.vol||0),0),n:L.filter(isTreino).length,kg:P.length?P[P.length-1].kg:null});
+    out.push({s:iso(s),e:iso(e),mode:'sem',lbl:s.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),kcal:L.reduce((a,l)=>a+l.kcal,0),vol:L.reduce((a,l)=>a+(l.vol||0),0),n:L.filter(isTreino).length,kg:P.length?P[P.length-1].kg:null});
   }
   return out;
 }
-function bars(data,key,color,fmt){
+function bars(data,key,color,fmt,ck){ck=ck||key;CH[ck]={data,key,fmt};
   const W=320,H=150,pl=8,pb=22,pt=22,max=Math.max(1,...data.map(d=>d[key]))*1.1;
   const bw=(W-pl*2)/data.length;
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
   [0.5,1].forEach(f=>{const y=H-pb-(H-pb-pt)*f;s+=`<line x1="0" x2="${W}" y1="${y}" y2="${y}" stroke="#ffffff" stroke-opacity=".08" stroke-dasharray="4 4"/>`});
-  data.forEach((d,i)=>{const h=(H-pb-pt)*d[key]/max,x=pl+i*bw+6,y=H-pb-h,last=i===data.length-1;
-    s+=`<rect x="${x}" y="${y}" width="${bw-12}" height="${h}" fill="${last?'#c6f135':'#343b44'}" rx="4"/>`;
-    if(d[key])s+=`<text x="${x+(bw-12)/2}" y="${y-5}" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow" font-weight="700" font-size="14" fill="#eef1f4">${fmt(d[key])}</text>`;
+  data.forEach((d,i)=>{const h=(H-pb-pt)*d[key]/max,x=pl+i*bw+6,y=H-pb-Math.max(h,3),last=i===data.length-1;
+    s+=`<rect class="hit" data-ck="${ck}" data-bi="${i}" x="${pl+i*bw}" y="0" width="${bw}" height="${H}" fill="transparent"/>`;
+    s+=`<rect class="bar" data-ck="${ck}" data-bi="${i}" x="${x}" y="${y}" width="${bw-12}" height="${Math.max(h,3)}" fill="${last?'#c6f135':'#343b44'}" rx="${h<8?1.5:4}"/>`;
+    if(d[key])s+=`<text class="bv" data-bi="${i}" x="${x+(bw-12)/2}" y="${y-5}" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow" font-weight="700" font-size="14" fill="#eef1f4">${fmt(d[key])}</text>`;
     s+=`<text x="${x+(bw-12)/2}" y="${H-6}" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow" font-weight="800" font-size="11" fill="#8b949e">${d.lbl}</text>`});
-  s+=`<line x1="0" x2="${W}" y1="${H-pb}" y2="${H-pb}" stroke="#2a3038" stroke-width="1.5"/></svg>`;return s;
+  s+=`<line x1="0" x2="${W}" y1="${H-pb}" y2="${H-pb}" stroke="#2a3038" stroke-width="1.5"/></svg><div class="cdet" id="cdet-${ck}" aria-live="polite"></div>`;return s;
 }
 function line(data){
   const pts=data.filter(d=>d.kg!==null);if(pts.length<2)return'<p class="note">Registre seu peso no Perfil para ver a curva.</p>';
@@ -1124,23 +1152,26 @@ function line(data){
   const c=data.map((d,i)=>d.kg===null?null:[X(i),Y(d.kg),d]).filter(Boolean);
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img"><path d="M${c.map(q=>q[0]+' '+q[1]).join(' L')} L${c[c.length-1][0]} ${H-p} L${c[0][0]} ${H-p}Z" fill="#c6f135" fill-opacity=".12"/>
     <polyline points="${c.map(q=>q[0]+','+q[1]).join(' ')}" fill="none" stroke="#c6f135" stroke-width="2.5" stroke-linejoin="round"/>`;
-  c.forEach((q,i)=>{const last=i===c.length-1;s+=`<circle cx="${q[0]}" cy="${q[1]}" r="${last?7:5}" fill="${last?'#c6f135':'#16191e'}" stroke="#c6f135" stroke-width="2"/>
+  CH.peso={pts:c.map(q=>q[2])};
+  c.forEach((q,i)=>{const last=i===c.length-1;s+=`<circle class="hitc" data-ck="peso" data-bi="${i}" cx="${q[0]}" cy="${q[1]}" r="16" fill="transparent" stroke="none"/><circle class="pt" data-bi="${i}" cx="${q[0]}" cy="${q[1]}" r="${last?7:5}" fill="${last?'#c6f135':'#16191e'}" stroke="#c6f135" stroke-width="2"/>
     <text x="${q[0]}" y="${q[1]-11}" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow" font-weight="700" font-size="14" fill="#eef1f4">${q[2].kg.toLocaleString('pt-BR')}</text>`});
   data.forEach((d,i)=>s+=`<text x="${X(i)}" y="${H-6}" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow" font-weight="800" font-size="11" fill="#8b949e">${d.lbl}</text>`);
-  return s+'</svg>';
+  return s+'</svg><div class="cdet" id="cdet-peso" aria-live="polite"></div>';
 }
 function vEvolucao(){
-  const W=weeks(),cur=W[W.length-1],prev=W[W.length-2];
+  const W=weeks(),cur=W[W.length-1],prev=W[W.length-2],DY=days7();
+  const D=k=>chartMode[k]==='dia'?DY:W,last=k=>{const a=D(k);return a[a.length-1]};
+  const seg=k=>`<div class="seg" role="group"><button class="${chartMode[k]!=='dia'?'on':''}" data-cmode="${k}|sem">Semanas</button><button class="${chartMode[k]==='dia'?'on':''}" data-cmode="${k}|dia">Dias</button></div>`;
   const hasEx=S.logs.some(l=>l.ex)||S.peso.some(p=>p.ex)||Object.values(S.hist).some(a=>a.some(h=>h.ex));
   const sample=hasEx?'<span class="tag y sample">Inclui dados de exemplo</span>':'';
   const diff=(a,b)=>b?Math.round((a-b)/b*100):0;
   const k=n=>n>=1000?(n/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})+'k':n;
-  let h=`<button class="btn y" data-go="historico" style="margin-bottom:16px">${ic('cal')} Ver histórico de treinos</button>`+recoveryPanel()+`<section class="panel chart">${sample}<div class="cap"><h2>${ic('flame')} Calorias por semana</h2><b>${cur.kcal}</b></div>
-    ${bars(W,'kcal','#ff7a1a',v=>v)}<p class="note">${diff(cur.kcal,prev.kcal)>=0?'+':''}${diff(cur.kcal,prev.kcal)}% em relação à semana passada.</p></section>
-    <section class="panel chart"><div class="cap"><h2>${ic('dumbbell')} Volume treinado</h2><b>${k(cur.vol)} kg</b></div>
-    ${bars(W,'vol','#7b4dff',k)}<p class="note">Volume = séries × repetições × carga. Subir aos poucos é sinal de progresso.</p></section>
+  let h=`<button class="btn y" data-go="historico" style="margin-bottom:16px">${ic('cal')} Ver histórico de treinos</button>`+recoveryPanel()+`<section class="panel chart">${sample}<div class="cap"><h2>${ic('flame')} Calorias</h2><b>${last('kcal').kcal}</b></div>${seg('kcal')}
+    ${bars(D('kcal'),'kcal','',v=>v)}</section>
+    <section class="panel chart"><div class="cap"><h2>${ic('dumbbell')} Volume treinado</h2><b>${k(last('vol').vol)} kg</b></div>${seg('vol')}
+    ${bars(D('vol'),'vol','',k)}<p class="note">Volume = séries × repetições × carga. Subir aos poucos é sinal de progresso.</p></section>
     <section class="panel chart"><div class="cap"><h2>${ic('scale')} Peso corporal</h2><b>${S.profile.peso.toLocaleString("pt-BR")} kg</b></div>${line(W)}</section>
-    <section class="panel chart"><div class="cap"><h2>${ic('trophy')} Treinos feitos</h2><b>${cur.n}</b></div>${bars(W,'n','#19c6b4',v=>v)}</section>`;
+    <section class="panel chart"><div class="cap"><h2>${ic('trophy')} Treinos feitos</h2><b>${last('n').n}</b></div>${seg('n')}${bars(D('n'),'n','',v=>v)}</section>`;
   const ks=Object.keys(S.hist).filter(k=>S.hist[k].some(x=>x.kg>0)&&EX[k]);
   if(ks.length){
     h+=`<section class="panel">${hasEx?'<span class="tag y sample">Exemplo</span>':''}<h2>${ic('trophy')} Progressão de carga</h2><div class="pl">`;
@@ -1759,7 +1790,7 @@ function enterAnim(from,to){
 }
 const _go=go;go=function(v){const from=view;_go(v);enterAnim(from,v)};
 const _render=render;render=function(){_render();afterRender()};
-function afterRender(){movePill();
+function afterRender(){movePill();try{chartsInit()}catch(e){}
   document.documentElement.style.setProperty('--hh',headEl.offsetHeight+'px');}
 
 /* Topo que encolhe ao rolar */
@@ -1844,6 +1875,63 @@ function finishAnim(k,i){
     if(nx){const r=nx.getBoundingClientRect(),hh=(headEl.offsetHeight||64)+60;scrollTo({top:scrollY+r.top-hh,behavior:'smooth'});nx.classList.add('next')}
   },1250);
 }
+
+/* ---------- Gráficos interativos ---------- */
+var CH={},chartMode={};
+function days7(){const out=[];for(let i=6;i>=0;i--){const d=addDays(today,-i),s=iso(d),e=iso(addDays(d,1));
+  const L=S.logs.filter(l=>l.date===s),P=S.peso.filter(p=>p.date===s);
+  out.push({s,e,mode:'dia',lbl:`${DN[d.getDay()]} ${d.getDate()}`,kcal:L.reduce((a,l)=>a+l.kcal,0),vol:L.reduce((a,l)=>a+(l.vol||0),0),n:L.filter(isTreino).length,kg:P.length?P[P.length-1].kg:null})}
+  return out}
+const fD=s=>new Date(s+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+const nf=(v,u='')=>(Math.round(v*10)/10).toLocaleString('pt-BR')+u;
+function dCell(lbl,val,sub,cls=''){return `<div class="cd-c"><small>${lbl}</small><b class="${cls}">${val}</b>${sub?`<em>${sub}</em>`:''}</div>`}
+function deltaCell(lbl,v,ref,u){if(ref===undefined||ref===null)return dCell(lbl,'—','sem dado anterior');
+  const d=v-ref,p=ref?Math.round(d/ref*100):null;return dCell(lbl,`${d>=0?'▲ +':'▼ '}${nf(d,u)}`,p===null?'':`${p>=0?'+':''}${p}%`,d>=0?'up':'dn')}
+function selBar(ck,i,anim=true){
+  const C=CH[ck];if(!C)return;const sec=document.querySelector(`#cdet-${ck}`);if(!sec)return;const box=sec.parentElement;
+  box.querySelectorAll('rect.bar').forEach(r=>{const on=+r.dataset.bi===i;r.classList.toggle('on',on);r.setAttribute('fill',on?'#c6f135':'#343b44')});
+  box.querySelectorAll('text.bv').forEach(t=>t.classList.toggle('on',+t.dataset.bi===i));
+  box.classList.add('sel');
+  const D=C.data,d=D[i],k=C.key,v=d[k],prev=i>0?D[i-1][k]:null,others=D.filter((_,j)=>j!==i).map(x=>x[k]),avg=others.length?others.reduce((a,b)=>a+b,0)/others.length:0;
+  const bi=D.reduce((m,x,j)=>x[k]>D[m][k]?j:m,0),u=k==='kcal'?' kcal':k==='vol'?' kg':'';
+  const per=d.mode==='dia'?'dia':'semana',range=d.mode==='dia'?new Date(d.s+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'}):`${fD(d.s)} a ${fD(iso(addDays(new Date(d.e+'T12:00:00'),-1)))}`;
+  const L=S.logs.filter(l=>l.date>=d.s&&l.date<d.e);
+  let h=`<div class="cd-h"><b>${per==='dia'?'Dia':'Semana'} selecionad${per==='dia'?'o':'a'}</b><span>${range}</span></div><div class="cd-g">
+    ${dCell('Total',`${nf(v,u)}`,i===D.length-1?(per==='dia'?'hoje':'semana atual'):'')}
+    ${deltaCell(`vs ${per} anterior`,v,prev,u)}
+    ${deltaCell(`vs média (${others.length} ${per==='dia'?'dias':'sem.'})`,v,Math.round(avg),u)}
+    ${dCell(`Melhor ${per}`,nf(D[bi][k],u),D[bi].lbl,bi===i?'up':'')}</div>`;
+  let x='';
+  if(k==='kcal'){const tk=L.filter(isTreino).reduce((a,l)=>a+l.kcal,0),ak=L.filter(l=>l.atv).reduce((a,l)=>a+l.kcal,0),tot=Math.max(1,tk+ak);
+    x+=`<div class="cd-bar"><i style="width:${tk/tot*100}%"></i><i class="b" style="width:${ak/tot*100}%"></i></div>
+      <div class="cd-r"><span><i class="dot a"></i>Musculação</span><b>${tk} kcal</b></div><div class="cd-r"><span><i class="dot b"></i>Outras atividades</span><b>${ak} kcal</b></div>
+      <div class="cd-r"><span>Sessões no período</span><b>${L.length}</b></div>${L.length?`<div class="cd-r"><span>Média por sessão</span><b>${Math.round((tk+ak)/L.length)} kcal</b></div>`:''}`}
+  if(k==='vol'){const per2={};Object.entries(S.hist).forEach(([ek,H])=>H.forEach(hh=>{if(hh.date>=d.s&&hh.date<d.e&&hh.kg>0&&EX[ek]){per2[ek]=(per2[ek]||0)+hh.kg*hh.reps.reduce((a,b)=>a+b,0)}}));
+    const top=Object.entries(per2).sort((a,b)=>b[1]-a[1]).slice(0,4),mx=top.length?top[0][1]:1;
+    x+=top.length?`<p class="cd-s">Exercícios que mais somaram</p>`+top.map(([ek,vv])=>`<div class="cd-r"><span>${esc(EX[ek].n)}</span><b>${nf(vv,' kg')}</b></div><div class="cd-mini"><i style="width:${vv/mx*100}%"></i></div>`).join(''):'<p class="cd-s">Sem cargas registradas nesse período.</p>'}
+  if(k==='n'){const ds=[...new Set(L.filter(isTreino).map(l=>l.date))].sort();
+    x+=`<div class="cd-r"><span>Dias treinados</span><b>${ds.length?ds.map(z=>DN[new Date(z+'T12:00:00').getDay()]).join(', '):'nenhum'}</b></div>`;
+    if(per==='semana'){const np=Object.keys(weekPlan()).length;x+=`<div class="cd-r"><span>Meta da semana</span><b>${v}/${np} ${v>=np?'✓':''}</b></div><div class="cd-mini"><i style="width:${Math.min(100,v/np*100)}%"></i></div>`}
+    x+=`<div class="cd-r"><span>Treinos (ses.)</span><b>${L.filter(isTreino).map(l=>SES[l.ses]?SES[l.ses].n:'').filter(Boolean).slice(0,3).join(' · ')||'—'}</b></div>`}
+  sec.innerHTML=`<div class="cd ${anim?'pop':''}">${h}${x?`<div class="cd-x">${x}</div>`:''}</div>`;
+}
+function selPt(i,anim=true){
+  const C=CH.peso;if(!C)return;const sec=document.getElementById('cdet-peso');if(!sec)return;const box=sec.parentElement;
+  box.querySelectorAll('circle.pt').forEach(c=>{const on=+c.dataset.bi===i;c.setAttribute('r',on?8:5);c.setAttribute('fill',on?'#c6f135':'#16191e')});
+  const P=C.pts,d=P[i],prev=i>0?P[i-1]:null,first=P[0],alt=(S.profile.altura||0)/100,imc=alt?d.kg/(alt*alt):null;
+  const cls=imc?(imc<18.5?'abaixo do peso':imc<25?'faixa saudável':imc<30?'sobrepeso':'obesidade'):'';
+  sec.innerHTML=`<div class="cd ${anim?'pop':''}"><div class="cd-h"><b>Peso na semana de ${d.lbl}</b><span>${i===P.length-1?'último registro':''}</span></div><div class="cd-g">
+    ${dCell('Peso',nf(d.kg,' kg'))}${deltaCell('vs registro anterior',d.kg,prev?prev.kg:null,' kg')}
+    ${deltaCell('desde o início',d.kg,i?first.kg:null,' kg')}${dCell('IMC',imc?nf(imc):'—',cls)}</div></div>`;
+}
+document.addEventListener('click',e=>{
+  const m=e.target.closest('[data-cmode]');if(m){const [k,v]=m.dataset.cmode.split('|');chartMode[k]=v;render();
+    const sec=document.getElementById('cdet-'+k);sec&&sec.parentElement.classList.add('swap');return}
+  const t=e.target.closest('[data-bi][data-ck]');if(!t)return;
+  if(t.dataset.ck==='peso')selPt(+t.dataset.bi);else selBar(t.dataset.ck,+t.dataset.bi);
+  try{navigator.vibrate&&navigator.vibrate(8)}catch(err){}
+});
+function chartsInit(){if(view!=='evolucao')return;Object.keys(CH).forEach(k=>{if(k==='peso'){if(document.getElementById('cdet-peso'))selPt(CH.peso.pts.length-1,false)}else if(document.getElementById('cdet-'+k))selBar(k,CH[k].data.length-1,false)})}
 /* ---------- Escolher reps de uma série ---------- */
 function repsSheet(e,i){
   const x=exDraft(e),cur=x.reps[i],top=Math.max(x.target+5,15),nums=[];for(let n=1;n<=Math.min(top,30);n++)nums.push(n);
