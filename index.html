@@ -186,6 +186,8 @@ label.btn{display:inline-block;text-align:center}
 .bubble h3{font-size:26px;margin:8px 0 4px}
 .bubble p{margin:0 0 12px;line-height:1.4}
 @media (prefers-reduced-motion:reduce){.spot{transition:none}}
+.ml i.em{color:#fff;background:var(--pink);padding:0 4px;border-radius:3px}
+.gchips .mus{cursor:pointer;color:var(--ink);background:#fff}.gchips .mus.on{background:var(--yellow)}
 .chart svg:not(.ic){width:100%;height:auto;display:block}
 .chart .cap{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .chart .cap b{font-family:var(--f-display);font-weight:400;font-size:28px;font-variant-numeric:tabular-nums}
@@ -269,9 +271,22 @@ const SES={
   PG:{n:'Quadríceps + Glúteos',g:['Quadríceps','Glúteos','Panturrilha'],why:'Agachamento, leg press e afundo usam quadríceps e glúteos ao mesmo tempo.',ex:['agach','leg','afundo','extensora','panturr','infra']},
   PO:{n:'Posterior + Glúteos',g:['Posterior de coxa','Glúteos'],why:'Stiff e elevação pélvica dividem o trabalho entre posterior e glúteos.',ex:['stiff','pelvica','flexora','afundo','abdutora','panturr']},
   OA:{n:'Ombros + Abdômen',g:['Ombros','Abdômen'],why:'O abdômen estabiliza o corpo nos movimentos acima da cabeça.',ex:['desenv','elev','crucinv','flexao','prancha','infra']},
+  SUP:{n:'Superiores',g:['Peito','Costas','Ombros','Braços'],why:'Um dia para todo o tronco, que libera outro dia para o grupo em ênfase.',ex:['supino','remada','desenv','puxada','triceps','rosca']},
+  BO:{n:'Braços + Ombros',g:['Bíceps','Tríceps','Ombros'],why:'Ombro e tríceps empurram juntos, e o bíceps fecha o treino sem disputar energia.',ex:['desenv','rosca','triceps','elev','martelo','tricfr']},
   MB:{n:'Cardio leve + mobilidade',g:['Cardio','Mobilidade'],why:'Dia ativo de recuperação.',ex:['corrida','mob']}
 };
 const SPLIT={1:['FA'],2:['FA','FB'],3:['EMP','PUX','PER'],4:['PT','CB','PER','OA'],5:['PT','CB','PG','OA','PO'],6:['EMP','PUX','PG','EMP','PUX','PO'],7:['EMP','PUX','PG','MB','EMP','PUX','PO']};
+/* Ênfase: o grupo escolhido aparece 2x na semana (a partir de 3 dias), vem primeiro no treino, ganha +1 série e um exercício extra */
+const EMPH={
+  eq:{n:'Equilibrado',ic:'target',mus:[],extra:[],split:{}},
+  pernas:{n:'Pernas e glúteos',ic:'glutes',mus:['legs','glutes'],extra:['pelvica','afundo','abdutora'],split:{3:['PG','SUP','PO'],4:['PG','EMP','PO','PUX'],5:['PG','EMP','PO','PUX','PER'],6:['PG','EMP','PO','PUX','PER','OA']}},
+  peito:{n:'Peito',ic:'chest',mus:['chest'],extra:['supinc','crucifixo','flexao'],split:{3:['PT','PER','SUP'],4:['PT','CB','PER','EMP'],5:['PT','CB','PER','EMP','PO'],6:['PT','CB','PG','EMP','PUX','PO']}},
+  costas:{n:'Costas',ic:'back',mus:['back'],extra:['rembaixa','pulldown','puxada'],split:{3:['CB','PER','SUP'],4:['CB','PT','PER','PUX'],5:['CB','PT','PER','PUX','OA'],6:['CB','PT','PG','PUX','EMP','PO']}},
+  ombros:{n:'Ombros',ic:'shoulder',mus:['shoulder'],extra:['elev','crucinv','desenv'],split:{3:['OA','PER','SUP'],4:['EMP','PUX','PER','OA'],5:['EMP','CB','PG','OA','PO'],6:['EMP','PUX','PG','OA','PT','PO']}},
+  bracos:{n:'Braços',ic:'arm',mus:['arm'],extra:['rosca','triceps','martelo'],split:{3:['EMP','PUX','PER'],4:['PT','CB','PER','BO'],5:['PT','CB','PG','BO','PO'],6:['PT','CB','PG','BO','PO','SUP']}},
+  abd:{n:'Abdômen',ic:'abs',mus:['abs'],extra:['prancha','infra'],split:{},always:true}
+};
+function splitFor(n,enf){const e=EMPH[enf||S.profile.enfase||'eq'];return (e.split&&e.split[n])||SPLIT[n]||[]}
 const DEFAULT_DAYS={1:[1],2:[1,4],3:[1,3,5],4:[1,2,4,5],5:[1,2,3,4,5],6:[1,2,3,4,5,6]};
 const GOALS={
   massa:{n:'Ganhar massa',d:'8–12 reps, mais volume',reps:'8–12',rest:90,base:3,max:6,met:'Séries retas. Descanse 1min30 entre séries e tente subir a carga quando fizer 12 reps.'},
@@ -360,7 +375,7 @@ function save(){try{localStorage.setItem('treino-bombastico',JSON.stringify(S))}
 /* ---------- Motor de treino ---------- */
 function weekIndex(){const s=new Date(S.profile.inicio+'T00:00:00');return Math.max(0,Math.floor((today-s)/(7*864e5)))}
 function phaseOf(w){return PHASES[w%4]}
-function sessionFor(code,goal){
+function sessionFor(code,goal,enf){
   const g=GOALS[goal||S.profile.objetivo],ph=phaseOf(weekIndex());
   const sets=Math.max(2,g.base+ph.add);
   if(SES[code].custom){
@@ -374,15 +389,22 @@ function sessionFor(code,goal){
     const base=list.filter(k=>EX[k].t==='base'),iso=list.filter(k=>EX[k].t!=='base');
     const pick=base.concat(iso).slice(0,g.max);
     list=list.filter(k=>pick.includes(k));
+    /* ênfase: grupo escolhido vai para o início, ganha 1 exercício extra e +1 série */
+    const E=EMPH[enf||S.profile.enfase||'eq'],isE=k=>E.mus.includes(mi(EX[k].m));
+    if(E.mus.length&&(E.always||list.some(isE))){
+      const add=E.extra.find(k=>!list.includes(k));if(add)list.push(add);
+      list=list.filter(isE).concat(list.filter(k=>!isE(k)));
+    }
     if(g.extra)list.push(g.extra);
+    var emph=isE;
   }
-  return list.map(k=>{const e=EX[k];return{k,n:e.n,met:e.met,m:e.m,s:e.s,t:e.t,bw:e.bw,iso:e.iso,cardio:e.cardio,sets:e.cardio?1:sets,reps:e.cardio?e.cardio+' min':(e.iso?'30–45 s':g.reps)}});
+  return list.map(k=>{const e=EX[k],em=!e.cardio&&emph&&emph(k);return{k,n:e.n,met:e.met,m:e.m,s:e.s,t:e.t,bw:e.bw,iso:e.iso,cardio:e.cardio,emph:em,sets:e.cardio?1:sets+(em?1:0),reps:e.cardio?e.cardio+' min':(e.iso?'30–45 s':g.reps)}});
 }
 function kcalFor(exs,goal){const keep=S.profile.objetivo;if(goal)S.profile.objetivo=goal;const r=kcalOf(exs);S.profile.objetivo=keep;return r}
 function weekPlan(){
   /* dias com treino personalizado ficam fixos; a sugestão automática divide os dias restantes */
   const days=S.profile.dias,A=S.profile.assign||{},idx=[];days.forEach((on,i)=>on&&!(A[i]&&SES[A[i]])&&idx.push(i));
-  const split=SPLIT[idx.length]||[];const map={};
+  const split=splitFor(idx.length);const map={};
   idx.forEach((d,i)=>map[d]=split[i]);
   Object.entries(S.profile.assign||{}).forEach(([d,c])=>{if(days[d]&&SES[c])map[d]=c});
   return map;
@@ -505,13 +527,13 @@ function vSemana(){
 
 function musLine(e){
   if(e.cardio)return '';
-  return `<p class="ml"><b>${esc(e.m)}</b>${e.s.length?` <span>ajuda: ${e.s.map(esc).join(', ')}</span>`:''}${e.t==='base'?' <i>multiarticular</i>':''}</p>`;
+  return `<p class="ml"><b>${esc(e.m)}</b>${e.s.length?` <span>ajuda: ${e.s.map(esc).join(', ')}</span>`:''}${e.t==='base'?' <i>multiarticular</i>':''}${e.emph?' <i class="em">ênfase</i>':''}</p>`;
 }
-let tGoal=null,tDays=null;
+let tGoal=null,tDays=null,tEnf=null;
 function vTreinos(){
   const goal=tGoal||S.profile.objetivo;
   const cnt=tDays||S.profile.dias.filter(Boolean).length||3;
-  const g=GOALS[goal],split=SPLIT[cnt];
+  const enf=tEnf||S.profile.enfase||'eq',g=GOALS[goal],split=splitFor(cnt,enf);
   const mine=Object.entries(S.custom);
   const plan=weekPlan();
   let h=`<section class="panel"><span class="tag v">${ic('target')}Personalizados</span><h2 style="margin-top:8px">Meus treinos</h2>
@@ -522,13 +544,16 @@ function vTreinos(){
   <section class="panel burst"><h2>Treinos prontos</h2>
     <p style="margin:0 0 10px">Escolha o objetivo e quantos dias você treina. O app monta a divisão por grupos musculares.</p>
     <div class="goals">${Object.entries(GOALS).map(([k,x])=>`<button class="goal ${goal===k?'on':''}" data-tgoal="${k}" aria-pressed="${goal===k}">${ic(GI[k])}${x.n}<small>${x.d}</small></button>`).join('')}</div>
+    <p class="lbl">Ênfase (grupo para dar mais atenção)</p>
+    <div class="gchips">${Object.entries(EMPH).map(([k,x])=>`<button class="mus ${enf===k?'on':''}" data-tenf="${k}" aria-pressed="${enf===k}">${ic(x.ic)}${x.n}</button>`).join('')}</div>
     <p class="lbl">Dias por semana</p>
     <div class="cnt">${[2,3,4,5,6].map(n=>`<button class="day ${cnt===n?'on':''}" data-tdays="${n}" aria-pressed="${cnt===n}">${n}</button>`).join('')}</div>
   </section>
-  <section class="panel"><span class="tag p">${g.n} · ${cnt} dias</span>
+  <section class="panel"><span class="tag p">${g.n} · ${cnt} dias${enf!=='eq'?' · ênfase '+EMPH[enf].n.toLowerCase():''}</span>
+    ${enf!=='eq'?`<p class="note" style="color:var(--ink);margin-top:8px"><b>Ênfase:</b> ${EMPH[enf].n.toLowerCase()} ${cnt>=3&&EMPH[enf].split[cnt]?'aparece 2 vezes na semana, ':''}vem no começo do treino, com 1 série a mais e um exercício extra. Os outros grupos continuam sendo treinados.</p>`:''}
     <p class="note" style="color:var(--ink);margin-top:8px"><b>Como fazer:</b> ${g.met}</p></section>`;
   split.forEach((c,i)=>{
-    const exs=sessionFor(c,goal),est=kcalFor(exs,goal);
+    const exs=sessionFor(c,goal,enf),est=kcalFor(exs,goal);
     h+=`<section class="panel"><div class="row" style="justify-content:space-between"><span class="tag o">Treino ${String.fromCharCode(65+i)}</span><span class="tag y">${ic('clock')}~${est.min} min · ${ic('flame')}${est.kcal} kcal</span></div>
       <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn small y" data-edit="${c}" data-goalfor="${goal}">✎ Personalizar</button></div>
       <h2 style="margin-top:8px">${SES[c].n}</h2>
@@ -536,7 +561,7 @@ function vTreinos(){
       <p class="note"><b style="color:var(--ink)">Por que juntos:</b> ${SES[c].why}</p>
       <ol class="exl">${exs.map(e=>`<li><div class="ex-h">${badge(e.m)}<h3>${esc(e.n)}</h3><span>${e.sets}× ${e.reps}</span></div>${musLine(e)}</li>`).join('')}</ol></section>`;
   });
-  const same=goal===S.profile.objetivo&&cnt===S.profile.dias.filter(Boolean).length;
+  const same=goal===S.profile.objetivo&&cnt===S.profile.dias.filter(Boolean).length&&enf===(S.profile.enfase||'eq');
   h+=same?`<p class="tag" style="display:block;text-align:center;padding:10px">Este é o seu plano atual</p>`:`<button class="btn" id="usePlan">Usar este plano</button>`;
   return h;
 }
@@ -696,7 +721,7 @@ function render(){
   $('#view').innerHTML={hoje:vHoje,treinos:vTreinos,editor:vEditor,semana:vSemana,evolucao:vEvolucao,perfil:vPerfil}[view]();
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===(view==='editor'?'treinos':view)));
 }
-function go(v){if(v!=='treinos'&&v!=='editor')tGoal=tDays=null;if(v!=='editor')ED=null;view=v;try{history.replaceState(null,'','#'+v)}catch(e){}render();window.scrollTo(0,0)}
+function go(v){if(v!=='treinos'&&v!=='editor')tGoal=tDays=tEnf=null;if(v!=='editor')ED=null;view=v;try{history.replaceState(null,'','#'+v)}catch(e){}render();window.scrollTo(0,0)}
 function toast(t){document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast pow';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
 
 document.addEventListener('click',e=>{
@@ -705,6 +730,7 @@ document.addEventListener('click',e=>{
   if(t.dataset.day){const d=+t.dataset.day;S.profile.dias[d]=!S.profile.dias[d];if(!S.profile.dias[d])delete S.profile.assign[d];save();render();return}
   if(t.dataset.goal){S.profile.objetivo=t.dataset.goal;save();render();return}
   if(t.dataset.tgoal){tGoal=t.dataset.tgoal;render();return}
+  if(t.dataset.tenf){const y=scrollY;tEnf=t.dataset.tenf;render();scrollTo(0,y);return}
   if(t.dataset.edit){openEditor(t.dataset.edit,t.dataset.goalfor);return}
   if(t.dataset.new){openEditor(null);return}
   if(ED){const keepName=()=>{const el=$('#eName');if(el)ED.n=el.value};
@@ -728,8 +754,9 @@ document.addEventListener('click',e=>{
   if(t.dataset.tdays){tDays=+t.dataset.tdays;render();return}
   if(t.id==='usePlan'){
     if(tGoal)S.profile.objetivo=tGoal;
+    if(tEnf)S.profile.enfase=tEnf;
     if(tDays&&tDays!==S.profile.dias.filter(Boolean).length){S.profile.dias=[0,1,2,3,4,5,6].map(d=>DEFAULT_DAYS[tDays].includes(d))}
-    tGoal=tDays=null;save();toast('Plano ativado!');go('semana');return}
+    tGoal=tDays=tEnf=null;save();toast('Plano ativado!');go('semana');return}
   if(t.dataset.bub){const e=curEx(t.dataset.bub),x=exDraft(e),i=+t.dataset.i,tg=e.iso?45:e.cardio?1:x.target;
     const r=x.reps[i];x.reps[i]=r===null?tg:(e.cardio||e.iso||r<=1?null:r-1);save();render();
     const nb=document.querySelector(`[data-bub="${e.k}"][data-i="${i}"]`);if(nb&&x.reps[i]===tg)nb.classList.add('pow');return}
