@@ -333,6 +333,7 @@ nav button.on{background:transparent;border-color:transparent;color:var(--text)}
 @keyframes spin{from{transform:rotate(-90deg) scale(.2)}to{transform:rotate(0) scale(1)}}
 .scene{width:100%;height:auto;display:block;border-radius:6px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.goalsum{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}.goalsum .ic{width:28px;height:28px;color:var(--acc)}.goalsum b{display:block;font-size:16px}.goalsum small{color:var(--muted);font-size:13px}
 /* ---------- Menu lateral ---------- */
 .who{gap:8px}
 .menub{order:3;flex:none;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);display:grid;place-items:center;cursor:pointer;padding:0}
@@ -998,7 +999,7 @@ function vPerfil(){
         <label class="btn small" for="pFoto">${p.foto?'Trocar foto':'Adicionar foto'}</label>
         <input id="pFoto" type="file" accept="image/*" hidden>
         ${p.foto?'<button class="btn small y" id="rmFoto">Remover</button>':''}
-        <p class="note" style="margin:0;color:var(--ink)">Tire uma foto ou escolha da galeria.</p>
+        <p class="note" style="margin:0">Tire uma foto ou escolha da galeria.</p>
       </div>
     </div>
     <div class="row">
@@ -1007,9 +1008,10 @@ function vPerfil(){
       <div class="field"><label for="pIdade">Idade</label><input id="pIdade" inputmode="numeric" value="${p.idade}"></div>
       <div class="field"><label for="pAlt">Altura (cm)</label><input id="pAlt" inputmode="numeric" value="${p.altura}"></div>
     </div></section>
-    <section class="panel"><h2>${ic('target')} Objetivo</h2><div class="goals">
-      ${Object.entries(GOALS).map(([k,g])=>`<button class="goal ${p.objetivo===k?'on':''}" data-goal="${k}" aria-pressed="${p.objetivo===k}">${ic(GI[k])}${g.n}<small>${g.d}</small></button>`).join('')}
-    </div><p class="note">O objetivo muda as repetições, o descanso e se entra cardio no fim do treino.</p></section>
+    <section class="panel"><h2>${ic('target')} Objetivo e plano</h2>
+      <div class="goalsum">${ic(GI[p.objetivo])}<div><b>${GOALS[p.objetivo].n}</b><small>${p.dias.filter(Boolean).length} dias por semana · ${(EMPH[p.enfase||'eq']||EMPH.eq).n}</small></div></div>
+      <button class="btn small y" data-go="treinos" style="margin-top:12px">✎ Alterar em Treinos</button>
+      <p class="note">Objetivo, dias e ênfase ficam juntos na aba Treinos, onde você vê o plano antes de ativar.</p></section>
     <button class="btn" id="saveP">Salvar perfil</button>
     ${backupPanel()}
     <button class="btn y" id="tourAgain" style="margin-top:14px">${ic('target')} Ver o tour do app</button>
