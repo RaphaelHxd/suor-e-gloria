@@ -850,7 +850,7 @@ function vHoje(){
   const wk=S.logs.filter(l=>l.date>=iso(weekStart)),wkT=wk.filter(isTreino);
   const wkK=wk.reduce((a,l)=>a+l.kcal,0);
   const doneToday=S.logs.find(l=>l.date===iso(today)&&!l.ex&&!l.atv),actsToday=S.logs.filter(l=>l.date===iso(today)&&l.atv);
-  let h=`<section class="panel burst tilt">
+  let h=`<button class="btn y" data-go="treinos" style="margin-bottom:16px">${ic('target')} Treinos prontos e meus treinos</button><section class="panel burst tilt">
     <div class="row" style="justify-content:space-between"><span class="tag v">Semana ${w+1} de 12</span><span class="tag p">${ph.n}</span></div>
     <h2 style="margin-top:10px">${DN[today.getDay()]}, ${today.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}</h2>
     <div class="stats">
@@ -969,7 +969,7 @@ function vInicio(){
 }
 function vSemana(){
   const plan=weekPlan(),w=weekIndex(),ph=phaseOf(w);
-  let h=`<button class="btn y" data-go="treinos" style="margin-bottom:16px">${ic('target')} Treinos prontos e meus treinos</button><section class="panel burst"><h2>Quais dias você treina?</h2>
+  let h=`<section class="panel burst"><h2>Quais dias você treina?</h2>
     <div class="days">${[1,2,3,4,5,6,0].map(d=>`<button class="day ${S.profile.dias[d]?'on':''}" data-day="${d}" aria-pressed="${S.profile.dias[d]}">${DN[d]}</button>`).join('')}</div>
     <p class="note" style="color:var(--text)">O app divide os treinos conforme a quantidade de dias e o seu objetivo (${GOALS[S.profile.objetivo].n.toLowerCase()}).</p></section>`;
   h+=`<section class="panel"><span class="tag v">${ic('target')}Periodização</span><h2 style="margin-top:8px">Fase: ${ph.n}</h2>
@@ -1184,7 +1184,7 @@ function render(){
   $('#hiName').textContent=S.profile.nome||'atleta';
   $('#hiAv').innerHTML=avatar();
   $('#view').innerHTML={inicio:vInicio,hoje:vHoje,treinos:vTreinos,editor:vEditor,historico:vHistorico,semana:vSemana,evolucao:vEvolucao,perfil:vPerfil}[view]();
-  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===(view==='editor'||view==='treinos'?'semana':view==='historico'?'evolucao':view)));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===(view==='editor'||view==='treinos'?'hoje':view==='historico'?'evolucao':view)));
 }
 function go(v){if(v!=='treinos'&&v!=='editor')tGoal=tDays=tEnf=null;if(v!=='editor')ED=null;view=v;try{history.replaceState(null,'','#'+v)}catch(e){}render();window.scrollTo(0,0)}
 function toast(t){document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast pow';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
@@ -1690,7 +1690,7 @@ function countUp(el){const t=el.textContent.trim();if(!/^\d{2,6}$/.test(t))retur
 
 /* Entrada de tela: desliza conforme a direção da aba, cards em cascata, gráficos se desenham */
 function enterAnim(from,to){
-  if(RM)return;const M=v=>v==='editor'||v==='treinos'?'semana':v==='historico'?'evolucao':v,a=TABS.indexOf(M(from)),b=TABS.indexOf(M(to));
+  if(RM)return;const M=v=>v==='editor'||v==='treinos'?'hoje':v==='historico'?'evolucao':v,a=TABS.indexOf(M(from)),b=TABS.indexOf(M(to));
   viewEl.classList.remove('enter','from-l','from-r');void viewEl.offsetWidth;
   viewEl.classList.add('enter',b>=a?'from-r':'from-l');
   [...viewEl.children].forEach((c,i)=>c.style.setProperty('--i',Math.min(i,8)));
