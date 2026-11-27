@@ -526,6 +526,11 @@ nav button.on .fl{fill:currentColor}
 nav button.on .cut{stroke:var(--paper)}
 nav button.on svg{animation:navPop .35s cubic-bezier(.2,1.6,.4,1)}
 @keyframes navPop{0%{transform:scale(.8)}60%{transform:scale(1.12) translateY(-1px)}100%{transform:translateY(-1px)}}
+.repgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.rp{height:52px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--text);font:700 22px var(--f-display);cursor:pointer}
+.rp.tg{border-color:var(--acc-line);color:var(--acc)}
+.rp.on{background:var(--acc);color:var(--ink);border-color:var(--acc)}
+.rp:active{transform:scale(.94)}
 </style>
 </head>
 <body>
@@ -836,7 +841,7 @@ function vHoje(){
     }
     h+=`</div></div>`;
   });
-  h+=`<p class="note">Toque na série para marcar que fez a meta. Fez menos? Toque de novo para tirar 1 rep.</p>`;
+  h+=`<p class="note">Toque na série para marcar que fez a meta. Fez outro número? Toque de novo na série e escolha as reps.</p>`;
   h+=`<div style="margin-top:14px">${doneToday?`<p class="tag" style="margin-bottom:8px">Treino de hoje já registrado: ${doneToday.kcal} kcal</p>`:''}
     <button class="btn" id="finish">${doneToday?'Atualizar registro':'Concluir treino!'}</button>${doneToday?'<button class="linkb" id="undoFinish">Desfazer registro de hoje</button>':''}</div></section>`;
   return h;
@@ -1098,7 +1103,8 @@ document.addEventListener('click',e=>{
     if(tDays&&tDays!==S.profile.dias.filter(Boolean).length){S.profile.dias=[0,1,2,3,4,5,6].map(d=>DEFAULT_DAYS[tDays].includes(d))}
     tGoal=tDays=tEnf=null;save();toast('Plano ativado!');go('semana');return}
   if(t.dataset.bub){const e=curEx(t.dataset.bub),x=exDraft(e),i=+t.dataset.i,tg=e.iso?45:e.cardio?1:x.target;
-    const r=x.reps[i];x.reps[i]=r===null?tg:(e.cardio||e.iso||r<=1?null:r-1);save();render();
+    const r=x.reps[i];if(r!==null&&!e.cardio&&!e.iso){repsSheet(e,i);return}
+    x.reps[i]=r===null?tg:null;save();render();
     if(r===null&&!e.cardio)startRest(GOALS[S.profile.objetivo].rest);
     const nb=document.querySelector(`[data-bub="${e.k}"][data-i="${i}"]`);if(nb&&x.reps[i]===tg)nb.classList.add('pow');return}
   if(t.dataset.all){const e=curEx(t.dataset.all),x=exDraft(e),full=x.reps.every(r=>r!==null);
@@ -1592,7 +1598,7 @@ document.addEventListener('click',e=>{
   if(t){const k=t.dataset.exopen;openDone.has(k)?openDone.delete(k):openDone.add(k);render();return}
   const b=e.target.closest('button');if(!b)return;
   if(b.dataset.bub||b.dataset.all){
-    const k=b.dataset.bub||b.dataset.all,i=b.dataset.i,x=exDraft(curEx(k)),on=b.dataset.bub?x.reps[+i]!==null:x.reps.some(r=>r!==null);
+    const k=b.dataset.bub||b.dataset.all,i=b.dataset.i,x=exDraft(curEx(k)),on=b.dataset.bub?(!b.classList.contains('on')&&x.reps[+i]!==null):x.reps.some(r=>r!==null);
     if(!on)return;
     try{navigator.vibrate&&navigator.vibrate(25)}catch(err){}
     const exEl=document.querySelector(`.ex[data-ex="${k}"]`);
@@ -1636,6 +1642,17 @@ const SCENE={
 };
 
 
+
+/* ---------- Escolher reps de uma série ---------- */
+function repsSheet(e,i){
+  const x=exDraft(e),cur=x.reps[i],top=Math.max(x.target+5,15),nums=[];for(let n=1;n<=Math.min(top,30);n++)nums.push(n);
+  openSheet(`<h2>Série ${i+1}</h2><p class="note" style="margin-top:0">${esc(e.n)} · meta ${x.target} reps. Quantas você fez?</p>
+    <div class="repgrid">${nums.map(n=>`<button class="rp ${n===cur?'on':''} ${n===x.target?'tg':''}" data-setreps="${n}" data-rk="${e.k}" data-ri="${i}">${n}</button>`).join('')}</div>
+    <button class="btn y" data-setreps="0" data-rk="${e.k}" data-ri="${i}" style="margin-top:14px">↺ Desmarcar série</button>`);
+}
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-setreps]');if(!b)return;
+  const e=curEx(b.dataset.rk);if(!e)return;const x=exDraft(e),n=+b.dataset.setreps;x.reps[+b.dataset.ri]=n>0?n:null;
+  save();closeSheet();render();toast(n>0?`Série ${+b.dataset.ri+1}: ${n} reps`:'Série desmarcada')});
 /* ---------- Menu lateral ---------- */
 const drawerEl=document.getElementById('drawer'),menuBtn=document.getElementById('menuBtn');
 const DI=(p)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
@@ -1700,7 +1717,7 @@ drawerEl.addEventListener('touchend',e=>{if(dx0!==null&&e.changedTouches[0].clie
 const TOUR=[
   {v:'hoje',sel:'.panel.burst',t:'Seu painel',x:'Aqui você vê a semana do ciclo, quantos treinos já fez, as calorias gastas e seu peso.'},
   {v:'hoje',sel:'.ex .load',t:'Carga sugerida',x:'O app já sugere a carga com base no seu último treino. Ajuste com − e + sem precisar digitar.',miss:'Nos dias de treino, cada exercício mostra a carga sugerida com base no último treino.'},
-  {v:'hoje',sel:'.ex .setrow',t:'Um toque por série',x:'Terminou a série? Toque na bolinha. Fez menos reps que a meta? Toque de novo para tirar 1. "Fiz todas" marca tudo de uma vez. O timer de descanso começa sozinho.',miss:'Nos dias de treino, você marca cada série com um toque e o timer de descanso começa sozinho.'},
+  {v:'hoje',sel:'.ex .setrow',t:'Um toque por série',x:'Terminou a série? Toque na bolinha. Fez outro número de reps? Toque de novo e escolha na lista. "Fiz todas" marca tudo de uma vez. O timer de descanso começa sozinho.',miss:'Nos dias de treino, você marca cada série com um toque e o timer de descanso começa sozinho.'},
   {v:'hoje',sel:'.ex .tools',t:'Ajuda no treino',x:'Veja como fazer o exercício, troque por outro se a máquina estiver ocupada e calcule as anilhas da barra.',miss:'Nos dias de treino, cada exercício tem "Como fazer", "Trocar" e calculadora de anilhas.'},
   {v:'hoje',sel:'#finish',t:'Concluir treino',x:'No fim, toque aqui. O app salva as cargas, calcula as calorias e prepara a progressão do próximo treino.',miss:'No fim do treino, um botão salva tudo e calcula as calorias.'},
   {v:'treinos',sel:'.panel',t:'Meus treinos',x:'Monte um treino do zero ou personalize um pronto: escolha exercícios, séries, ordem e dias.'},
